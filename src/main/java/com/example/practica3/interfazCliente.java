@@ -14,7 +14,9 @@ public interface interfazCliente extends Remote {
 	public void actualizarConectados(ArrayList<String> nombres)
 		throws java.rmi.RemoteException;
 
-    public String getNombre();
+    public String getNombre()
+        throws java.rmi.RemoteException;
 
-    public String getIP();
+    public String getIP()
+        throws java.rmi.RemoteException;
 }

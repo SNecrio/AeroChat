@@ -14,14 +14,18 @@ public class ConnectPopUpController {
 
     @FXML
     public void setUsuario(interfazCliente user, boolean esAmigo) {
-        this.nombre = user.getNombre();
-        this.IP = user.getIP();
-        this.esAmigo = esAmigo;
+        try {
+            this.nombre = user.getNombre();
+            this.IP = user.getIP();
+            this.esAmigo = esAmigo;
 
-        if(esAmigo){
-            amigoButton.setText("Eliminar amigo");
-        }else{
-            amigoButton.setText("Añadir amigo");
+            if (esAmigo) {
+                amigoButton.setText("Eliminar amigo");
+            } else {
+                amigoButton.setText("Añadir amigo");
+            }
+        }catch(Exception e){
+            System.err.println("Error: " + e);
         }
     }
 

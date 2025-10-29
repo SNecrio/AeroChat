@@ -166,12 +166,18 @@ public class AerochatController {
         vboxConectados.getChildren().clear();
 
         int id = 0;
-        for(var usuario : conected){
-            //Button button = new Button((usuario.getName()));
-            Button button = new Button(usuario.getNombre());
-            button.setPrefWidth(vboxConectados.getWidth());
-            button.setOnAction(event -> {onUserClick(id);});
-            vboxConectados.getChildren().add(button);
+        try {
+            for (var usuario : conected) {
+                //Button button = new Button((usuario.getName()));
+                Button button = new Button(usuario.getNombre());
+                button.setPrefWidth(vboxConectados.getWidth());
+                button.setOnAction(event -> {
+                    onUserClick(id);
+                });
+                vboxConectados.getChildren().add(button);
+            }
+        }catch(Exception e){
+            System.err.println("Error: " + e);
         }
     }
 
