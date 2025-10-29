@@ -7,10 +7,20 @@ import java.util.ArrayList;
 public class implementacionCliente extends UnicastRemoteObject implements interfazCliente {
 
     private String name;
+    private String IP;
 
-    public implementacionCliente(String name) throws RemoteException {
+    public implementacionCliente(String eName, String eIP) throws RemoteException {
         super();
-        this.name = name;
+        this.name = eName;
+        this.IP = eIP;
+    }
+
+    public String getNombre(){
+        return name;
+    }
+
+    public String getIP(){
+        return IP;
     }
 
     public void notificarLlegada(String nombre) {

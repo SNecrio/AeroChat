@@ -16,7 +16,6 @@ import java.net.InetAddress;
 import java.rmi.*;
 import java.io.*;
 
-import java.io.IOException;
 import java.rmi.Naming;
 import java.util.ArrayList;
 
@@ -26,8 +25,6 @@ public class AerochatController {
     private Label warningText;
     @FXML
     private AnchorPane panel;
-    @FXML
-    private ImageView fondo;
     @FXML
     private ImageView fondoNegro;
     @FXML
@@ -48,13 +45,13 @@ public class AerochatController {
     private Label loginWarning;
 
     private FXMLLoader connectedPopUp;
-    private ArrayList<User> conected;
+    private ArrayList<interfazCliente> conected;
     private interfazCliente cliente;
     private interfazServidor servidor;
     private int userID;
 
     @FXML
-    public void initialize() {
+    public void initialize() throws Exception{
         connectedPopUp = new FXMLLoader(getClass().getResource("FriendUser.fxml"));
 
         Image backgroundImage = new Image(getClass().getResource("aeroBackground.jpg").toExternalForm());
@@ -106,10 +103,10 @@ public class AerochatController {
         }
 
         try{
-            Conectar(username, password);
+            Conectar(username);
         } catch (Exception e) {
             System.err.println("Error conectandose a servidor");
-            //throw new RuntimeException(e);
+            throw new RuntimeException(e);
         }
         //try login
         boolean loginSuccess=false;
@@ -135,16 +132,18 @@ public class AerochatController {
         }
     }
 
-    private void Conectar(String username, String password) throws Exception {
+    private void Conectar(String username) throws Exception {
         String registryURL = "rmi://localhost:1099/aerochat";
         //ConectedList conectedMetadata = (ConectedList)Naming.lookup(registryURL + "/conected");
         //conected = conectedMetadata.getConected();
         servidor = (interfazServidor)Naming.lookup(registryURL);
-        cliente = new implementacionCliente(username);
 
+        conected = servidor.obtenerClientesActuales();
         InetAddress localHost = InetAddress.getLocalHost();
         System.out.println("Tu nombre de host: " + localHost.getHostName());
         System.out.println("Tu IP local: " + localHost.getHostAddress());
+
+        cliente = new implementacionCliente(username, localHost.getHostAddress());
     }
 
     @FXML
@@ -169,7 +168,7 @@ public class AerochatController {
         int id = 0;
         for(var usuario : conected){
             //Button button = new Button((usuario.getName()));
-            Button button = new Button(usuario.getName());
+            Button button = new Button(usuario.getNombre());
             button.setPrefWidth(vboxConectados.getWidth());
             button.setOnAction(event -> {onUserClick(id);});
             vboxConectados.getChildren().add(button);

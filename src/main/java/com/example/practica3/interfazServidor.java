@@ -11,7 +11,7 @@ public interface interfazServidor extends Remote {
 	public void borrarCliente(String nombre)
 		throws java.rmi.RemoteException;
 		
-	public ArrayList<String> obtenerClientesActuales()
+	public ArrayList<interfazCliente> obtenerClientesActuales()
 		throws java.rmi.RemoteException;
 		
 	public void enviarAmistad()

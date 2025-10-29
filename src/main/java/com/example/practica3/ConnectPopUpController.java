@@ -13,8 +13,8 @@ public class ConnectPopUpController {
     private boolean esAmigo;
 
     @FXML
-    public void setUsuario(User user, boolean esAmigo) {
-        this.nombre = user.getName();
+    public void setUsuario(interfazCliente user, boolean esAmigo) {
+        this.nombre = user.getNombre();
         this.IP = user.getIP();
         this.esAmigo = esAmigo;
 

@@ -53,8 +53,8 @@ public class implementacionServidor extends UnicastRemoteObject
 		}
 	}
 	
-	public ArrayList<String> obtenerClientesActuales() throws RemoteException{
-		return new ArrayList<>(clientes.keySet());
+	public ArrayList<interfazCliente> obtenerClientesActuales() throws RemoteException{
+		return new ArrayList<>(clientes.values());
 	}
 	
 	public void enviarAmistad() throws RemoteException{
