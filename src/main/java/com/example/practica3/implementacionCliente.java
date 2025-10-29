@@ -5,6 +5,7 @@ import java.rmi.*;
 import java.util.ArrayList;
 
 public class implementacionCliente extends UnicastRemoteObject implements interfazCliente {
+
     private String name;
 
     public implementacionCliente(String name) throws RemoteException {

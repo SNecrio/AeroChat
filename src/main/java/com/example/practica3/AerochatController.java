@@ -11,6 +11,8 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BackgroundSize;
 import javafx.scene.layout.*;
+
+import java.net.InetAddress;
 import java.rmi.*;
 import java.io.*;
 
@@ -131,8 +133,6 @@ public class AerochatController {
             loginWarning.setText("Contraseña no coincidente con ese usuario");
             return;
         }
-
-
     }
 
     private void Conectar(String username, String password) throws Exception {
@@ -141,6 +141,10 @@ public class AerochatController {
         //conected = conectedMetadata.getConected();
         servidor = (interfazServidor)Naming.lookup(registryURL);
         cliente = new implementacionCliente(username);
+
+        InetAddress localHost = InetAddress.getLocalHost();
+        System.out.println("Tu nombre de host: " + localHost.getHostName());
+        System.out.println("Tu IP local: " + localHost.getHostAddress());
     }
 
     @FXML
@@ -159,26 +163,17 @@ public class AerochatController {
         panelConectados.setOpacity(1);
         panelConectados.toFront();
 
-        //---------------------------------
-        ArrayList<String> con = new ArrayList<>();
-        con.add("Pablo");
-        con.add("Maria");
-        con.add("Juan");
-        con.add("Sergio");
-        con.add("Martina");
-
+        //--------------------------------
         vboxConectados.getChildren().clear();
 
         int id = 0;
-        for(var usuario : con){
+        for(var usuario : conected){
             //Button button = new Button((usuario.getName()));
-            Button button = new Button(usuario);
+            Button button = new Button(usuario.getName());
             button.setPrefWidth(vboxConectados.getWidth());
             button.setOnAction(event -> {onUserClick(id);});
             vboxConectados.getChildren().add(button);
         }
-
-
     }
 
     @FXML
