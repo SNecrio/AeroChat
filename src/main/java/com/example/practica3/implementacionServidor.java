@@ -97,8 +97,10 @@ public class implementacionServidor extends UnicastRemoteObject
 		String cadea; 
 		try(FileReader f = new FileReader(arquivo)){
 			BufferedReader b = new BufferedReader(f);
+
 			while((cadea = b.readLine())!=null){
 				String[] partes = cadea.split("\\|");
+
 				if(partes[0].equals(nome)){
 					byte[] salt = Base64.getDecoder().decode(partes[1]);
 					byte[] hashGardado = Base64.getDecoder().decode(partes[2]);

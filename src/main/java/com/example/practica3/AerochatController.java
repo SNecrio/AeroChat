@@ -2,6 +2,7 @@ package com.example.practica3;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
@@ -116,7 +117,7 @@ public class AerochatController {
                 loginSuccess = true;//!
             }
         }catch(Exception e){
-            System.err.println("Error: " + e);
+            loginWarning.setText(e.getMessage());
         }
 
         if(loginSuccess){
@@ -191,6 +192,18 @@ public class AerochatController {
         panel.getChildren().remove(fondoNegro);
         fondoNegro = null;
         warningText.setText("");
+    }
+
+    @FXML
+    protected void onAbrirChat() throws Exception{
+
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("SecondView.fxml"));
+        Parent root = loader.load();
+
+        // Obtener el controlador de la nueva ventana
+        ChatController controller = loader.getController();
+
+        controller.setUsers(cliente);
     }
 
     @FXML
