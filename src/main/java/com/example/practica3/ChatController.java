@@ -1,5 +1,6 @@
 package com.example.practica3;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
@@ -90,10 +91,13 @@ public class ChatController {
             chatbox.getChildren().add(usuario);
             chatbox.getChildren().add(mensaje);
 
+
         } catch (RemoteException e) {
             System.err.println("Error en el mandado de mensaje");
             throw new RuntimeException(e);
         }
+
+        Platform.runLater(() -> scroll.setVvalue(1.0));
 
         messageArea.setText("");
     }

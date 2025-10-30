@@ -10,6 +10,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BackgroundSize;
 import javafx.scene.layout.*;
@@ -37,7 +38,9 @@ public class AerochatController {
     @FXML
     private Button conectarBoton;
     @FXML
-    private Button amigoButton;
+    private Button abrirUsuariosBoton;
+    @FXML
+    private Button amigoBoton;
     @FXML
     private AnchorPane loginPane;
     @FXML
@@ -77,6 +80,12 @@ public class AerochatController {
         fondoNegro.setOpacity(0.35d);
         fondoNegro.setDisable(false);
         panel.getChildren().add(fondoNegro);
+
+        loginPane.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.ENTER) {
+                login();
+            }
+        });
 
         Image backgroundImageLogin = new Image(getClass().getResource("loginBackground.jpeg").toExternalForm());
         BackgroundImage backgroundLogin = new BackgroundImage(
@@ -134,6 +143,7 @@ public class AerochatController {
                 throw new RuntimeException(e);
             }
 
+            abrirUsuariosBoton.setDisable(false);
             loginPane.setDisable(true);
             loginPane.setOpacity(0);
 
@@ -163,6 +173,8 @@ public class AerochatController {
         fondoNegro.setOnMouseClicked(event -> {onTouchFondoNegro();});
 
         panel.getChildren().add(fondoNegro);
+
+        abrirUsuariosBoton.setDisable(true);
         panelConectados.setDisable(false);
         panelConectados.setOpacity(1);
         panelConectados.toFront();
@@ -192,6 +204,7 @@ public class AerochatController {
         panelConectados.setDisable(true);
         panelConectados.setOpacity(0);
         conectarBoton.setDisable(true);
+        abrirUsuariosBoton.setDisable(false);
 
         panel.getChildren().remove(fondoNegro);
         fondoNegro = null;
