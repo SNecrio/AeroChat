@@ -157,7 +157,13 @@ public class AerochatController {
     }
 
     private void Conectar(String username) throws Exception {
-        String registryURL = "rmi://localhost:1099/aerochat";
+        InputStreamReader is = new InputStreamReader(System.in);
+        BufferedReader br = new BufferedReader(is);
+
+        System.out.println("Introduza a IP do servidor RMI: ");
+        String hostName = br.readLine();
+
+        String registryURL = "rmi://" + hostName+ ":1099/aerochat";
         servidor = (interfazServidor)Naming.lookup(registryURL);
     }
 
