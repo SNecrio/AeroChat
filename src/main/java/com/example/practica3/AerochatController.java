@@ -48,17 +48,21 @@ public class AerochatController {
     @FXML
     private TextField passwordText;
     @FXML
+    private TextField ipText;
+    @FXML
+    private TextField friendText;
+    @FXML
     private Label loginWarning;
 
     private FXMLLoader connectedPopUp;
     private ArrayList<String> conected;
     private interfazCliente cliente;
     private interfazServidor servidor;
-    private int userID;
     private interfazCliente actualUser;
 
     @FXML
     public void initialize() throws Exception{
+
         connectedPopUp = new FXMLLoader(getClass().getResource("FriendUser.fxml"));
 
         Image backgroundImage = new Image(getClass().getResource("aeroBackground.jpg").toExternalForm());
@@ -105,6 +109,7 @@ public class AerochatController {
 
         String username = usernameText.getText();
         String password = passwordText.getText();
+        String ip = ipText.getText();
 
         if(username.isBlank()){
             loginWarning.setText("Introduzca un usuario valido");
@@ -114,9 +119,13 @@ public class AerochatController {
             loginWarning.setText("Introduzca una contraseña valida");
             return;
         }
+        if(ip.isBlank()){
+            loginWarning.setText("Introduzca una contraseña valida");
+            return;
+        }
 
         try{
-            Conectar(username);
+            Conectar(username, ip);
         } catch (Exception e) {
             loginWarning.setText("Error conectandose a servidor");
             throw new RuntimeException(e);
@@ -133,16 +142,28 @@ public class AerochatController {
             loginWarning.setText(e.getMessage());
         }
 
+        //Se conecto al servidor bien
         if(loginSuccess){
             try{
                 cliente = servidor.registrarCliente(username);
                 conected = servidor.obtenerClientesActuales();
                 cliente.actualizarConectados(conected);
+
+                Stage stage = (Stage) panel.getScene().getWindow();
+                stage.setOnCloseRequest(event -> {
+                    try {
+                        servidor.borrarCliente(cliente.getNombre());
+                    } catch (RemoteException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
             } catch (Exception e) {
                 System.err.println("No se pudo obtener la lista de usuarios actuales");
                 throw new RuntimeException(e);
             }
 
+            amigoBoton.setDisable(false);
+            friendText.setDisable(false);
             abrirUsuariosBoton.setDisable(false);
             loginPane.setDisable(true);
             loginPane.setOpacity(0);
@@ -156,13 +177,7 @@ public class AerochatController {
         }
     }
 
-    private void Conectar(String username) throws Exception {
-        InputStreamReader is = new InputStreamReader(System.in);
-        BufferedReader br = new BufferedReader(is);
-
-        System.out.println("Introduza a IP do servidor RMI: ");
-        String hostName = br.readLine();
-
+    private void Conectar(String username, String hostName) throws Exception {
         String registryURL = "rmi://" + hostName+ ":1099/aerochat";
         servidor = (interfazServidor)Naming.lookup(registryURL);
     }
