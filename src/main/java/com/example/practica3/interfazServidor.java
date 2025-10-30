@@ -5,13 +5,13 @@ import java.util.ArrayList;
 
 public interface interfazServidor extends Remote {
 
-	public void registrarCliente(String nombre, interfazCliente interfaz)
-		throws java.rmi.RemoteException;
+	public interfazCliente registrarCliente(String nombre)
+		throws Exception;
 		
 	public void borrarCliente(String nombre)
 		throws java.rmi.RemoteException;
 		
-	public ArrayList<interfazCliente> obtenerClientesActuales()
+	public ArrayList<String> obtenerClientesActuales()
 		throws java.rmi.RemoteException;
 		
 	public void enviarAmistad()
@@ -23,4 +23,6 @@ public interface interfazServidor extends Remote {
 	public boolean accederUsuario(String nome, String contrasinal)
 		throws java.rmi.RemoteException;
 
-}
+    public interfazCliente getCliente(String nome) throws Exception;
+
+    }

@@ -3,6 +3,7 @@ package com.example.practica3;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
@@ -12,6 +13,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BackgroundSize;
 import javafx.scene.layout.*;
+import javafx.stage.Stage;
 
 import java.net.InetAddress;
 import java.rmi.*;
@@ -46,7 +48,7 @@ public class AerochatController {
     private Label loginWarning;
 
     private FXMLLoader connectedPopUp;
-    private ArrayList<interfazCliente> conected;
+    private ArrayList<String> conected;
     private interfazCliente cliente;
     private interfazServidor servidor;
     private int userID;
@@ -113,14 +115,24 @@ public class AerochatController {
         boolean loginSuccess=false;
         try{
             if(servidor.novoUsuario(username,password)) {
-                servidor.registrarCliente(username, cliente);
                 loginSuccess = true;//!
+            }else{
+                loginSuccess = servidor.accederUsuario(username, password);
             }
         }catch(Exception e){
             loginWarning.setText(e.getMessage());
         }
 
         if(loginSuccess){
+            try{
+                cliente = servidor.registrarCliente(username);
+                conected = servidor.obtenerClientesActuales();
+                cliente.actualizarConectados(conected);
+            } catch (Exception e) {
+                System.err.println("No se pudo obtener la lista de usuarios actuales");
+                throw new RuntimeException(e);
+            }
+
             loginPane.setDisable(true);
             loginPane.setOpacity(0);
 
@@ -135,16 +147,7 @@ public class AerochatController {
 
     private void Conectar(String username) throws Exception {
         String registryURL = "rmi://localhost:1099/aerochat";
-        //ConectedList conectedMetadata = (ConectedList)Naming.lookup(registryURL + "/conected");
-        //conected = conectedMetadata.getConected();
         servidor = (interfazServidor)Naming.lookup(registryURL);
-
-        conected = servidor.obtenerClientesActuales();
-        InetAddress localHost = InetAddress.getLocalHost();
-        System.out.println("Tu nombre de host: " + localHost.getHostName());
-        System.out.println("Tu IP local: " + localHost.getHostAddress());
-
-        cliente = new implementacionCliente(username, localHost.getHostAddress());
     }
 
     @FXML
@@ -169,13 +172,14 @@ public class AerochatController {
         int id = 0;
         try {
             for (var usuario : conected) {
-                //Button button = new Button((usuario.getName()));
-                Button button = new Button(usuario.getNombre());
-                button.setPrefWidth(vboxConectados.getWidth());
-                button.setOnAction(event -> {
-                    onUserClick(id);
-                });
-                vboxConectados.getChildren().add(button);
+                if(usuario != cliente.getNombre()){
+                    Button button = new Button(usuario);
+                    button.setPrefWidth(vboxConectados.getWidth());
+                    button.setOnAction(event -> {
+                        onUserClick(id);
+                    });
+                    vboxConectados.getChildren().add(button);
+                }
             }
         }catch(Exception e){
             System.err.println("Error: " + e);
@@ -197,8 +201,13 @@ public class AerochatController {
     @FXML
     protected void onAbrirChat() throws Exception{
 
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("SecondView.fxml"));
-        Parent root = loader.load();
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("AerochatChat.fxml"));
+        Scene scene = new Scene(loader.load(), 720, 440);
+
+        Stage chat = new Stage();
+        chat.setTitle(cliente.getNombre());
+        chat.setScene(scene);
+        chat.show();
 
         // Obtener el controlador de la nueva ventana
         ChatController controller = loader.getController();

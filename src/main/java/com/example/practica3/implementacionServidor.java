@@ -17,10 +17,13 @@ public class implementacionServidor extends UnicastRemoteObject
 	  clientes = new HashMap<>();
 	}
    
-    public void registrarCliente(String nome, interfazCliente interfaz) throws RemoteException{
+    public interfazCliente registrarCliente(String nome) throws Exception{
 		//Metemos ao novo cliente no hashmap
-		clientes.put(nome, interfaz);
-		System.out.println("Cliente " + nome + " conectado");
+        String IP = RemoteServer.getClientHost();
+        implementacionCliente clienteNuevo = new implementacionCliente(nome, IP);
+
+        clientes.put(nome, clienteNuevo);
+		System.out.println("Cliente " + nome + " conectado con IP " + IP);
 		
 		//Notificamos aos demais da nova conexion
 		for(Map.Entry<String,interfazCliente> entrada : clientes.entrySet()){
@@ -36,7 +39,7 @@ public class implementacionServidor extends UnicastRemoteObject
 		}
 		Set<String> actuais = clientes.keySet();
 		ArrayList<String> conectados = new ArrayList<>(actuais);
-        interfaz.actualizarConectados(conectados);
+        return clienteNuevo;
 	}
 	
 	public void borrarCliente(String nome) throws RemoteException{
@@ -53,21 +56,20 @@ public class implementacionServidor extends UnicastRemoteObject
 		}
 	}
 	
-	public ArrayList<interfazCliente> obtenerClientesActuales() throws RemoteException{
-		return new ArrayList<>(clientes.values());
+	public ArrayList<String> obtenerClientesActuales() throws RemoteException{
+		return new ArrayList<>(clientes.keySet());
 	}
 	
 	public void enviarAmistad() throws RemoteException{
 		
 	}
 	
-	
 	public boolean novoUsuario(String nome, String contrasinal){
 		try{
 			if(usuarioExiste(nome)){
-                accederUsuario(nome, contrasinal);
+                //accederUsuario(nome, contrasinal);
 				//System.out.println("Ese nome de usuario xa esta collido. Por favor, escolla outro.");
-                //return false;
+                return false;
 			} else {
                 //Hasheamos o contrasinal para que sexa seguro
                 //Xeramos o salt
@@ -129,6 +131,10 @@ public class implementacionServidor extends UnicastRemoteObject
 		}
 		return false;
 	}
+
+    public interfazCliente getCliente(String nome) throws Exception{
+        return clientes.get(nome);
+    }
 	
 	private byte[] hashear(String contrasinal, byte[] salt) throws NoSuchAlgorithmException{
 		MessageDigest md = MessageDigest.getInstance("SHA-512");
