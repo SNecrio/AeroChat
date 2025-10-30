@@ -11,7 +11,7 @@
 
 <AnchorPane fx:id="panel" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="422.0" prefWidth="718.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.practica3.AerochatController">
    <children>
-      <Label layoutX="14.0" layoutY="15.0" text="Bienvenido a AeroChat">
+      <Label layoutX="8.0" layoutY="9.0" text="Bienvenido a AeroChat" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0">
          <font>
             <Font size="41.0" />
          </font>
@@ -25,20 +25,25 @@
          <cursor>
             <Cursor fx:constant="HAND" />
          </cursor></Button>
-      <Label fx:id="warningText" layoutX="18.0" layoutY="67.0" prefHeight="25.0" prefWidth="269.0">
+      <Label fx:id="warningText" layoutX="18.0" layoutY="67.0" prefHeight="25.0" prefWidth="269.0" textFill="RED" AnchorPane.leftAnchor="18.0" AnchorPane.topAnchor="67.0">
          <font>
             <Font size="18.0" />
          </font>
       </Label>
-      <ScrollPane fx:id="panelConectados" disable="true" layoutX="221.0" layoutY="48.0" opacity="0.0" prefHeight="326.0" prefWidth="276.0" AnchorPane.bottomAnchor="48.0" AnchorPane.leftAnchor="221.0" AnchorPane.rightAnchor="221.0" AnchorPane.topAnchor="48.0">
-         <content>
-            <VBox fx:id="vboxConectados" alignment="TOP_CENTER" prefHeight="328.0" prefWidth="278.0">
-               <children>
-                  <Button disable="true" mnemonicParsing="false" prefHeight="26.0" prefWidth="284.0" text="Entrar al chat" />
-               </children>
-            </VBox>
-         </content>
-      </ScrollPane>
+      <AnchorPane fx:id="panelConectados" disable="true" layoutX="221.0" layoutY="48.0" opacity="0.0" AnchorPane.bottomAnchor="48.0" AnchorPane.leftAnchor="221.0" AnchorPane.rightAnchor="221.0" AnchorPane.topAnchor="48.0">
+         <children>
+            <ScrollPane prefHeight="290.0" prefWidth="276.0">
+               <content>
+                  <VBox fx:id="vboxConectados" alignment="TOP_CENTER" prefHeight="286.0" prefWidth="260.0">
+                     <children>
+                        <Button disable="true" mnemonicParsing="false" prefHeight="26.0" prefWidth="284.0" text="Entrar al chat" />
+                     </children>
+                  </VBox>
+               </content>
+            </ScrollPane>
+            <Button fx:id="conectarBoton" disable="true" layoutX="6.0" layoutY="295.0" mnemonicParsing="false" onAction="#onAbrirChat" prefHeight="26.0" prefWidth="92.0" text="Conectarse" />
+         </children>
+      </AnchorPane>
       <AnchorPane fx:id="loginPane" layoutX="-60.0" layoutY="115.0" prefHeight="182.0" prefWidth="300.0" AnchorPane.bottomAnchor="140.0" AnchorPane.leftAnchor="180.0" AnchorPane.rightAnchor="180.0" AnchorPane.topAnchor="100.0">
          <children>
             <Label layoutX="14.0" prefHeight="44.0" prefWidth="305.0" text="Introduzca Usuario" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="0.0">
@@ -66,17 +71,12 @@
             <Button layoutX="244.0" layoutY="139.0" mnemonicParsing="false" onAction="#login" text="Iniciar Sesion" AnchorPane.bottomAnchor="17.0" AnchorPane.rightAnchor="14.0" />
          </children>
       </AnchorPane>
-      <Button layoutX="160.0" layoutY="373.0" mnemonicParsing="false" onAction="#onAbrirChat" prefWidth="122.0" text="Gente conectada" AnchorPane.bottomAnchor="23.0" AnchorPane.leftAnchor="160.0">
-         <cursor>
-            <Cursor fx:constant="HAND" />
-         </cursor>
-      </Button>
-      <ScrollPane layoutX="526.0" layoutY="72.0" prefHeight="338.0" prefWidth="178.0">
+      <ScrollPane layoutX="526.0" layoutY="72.0" prefHeight="338.0" prefWidth="178.0" AnchorPane.bottomAnchor="12.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="72.0">
          <content>
             <VBox prefHeight="332.0" prefWidth="172.0" />
          </content>
       </ScrollPane>
-      <TextField layoutX="526.0" layoutY="44.0" prefHeight="26.0" prefWidth="178.0" />
+      <TextField layoutX="526.0" layoutY="44.0" prefHeight="26.0" prefWidth="178.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="44.0" />
       <Button alignment="CENTER" layoutX="526.0" layoutY="18.0" minHeight="-Infinity" mnemonicParsing="false" onAction="#onAbrirChat" prefHeight="25.0" prefWidth="92.0" text="Añadir" textAlignment="CENTER" AnchorPane.rightAnchor="100.0" AnchorPane.topAnchor="18.0">
          <cursor>
             <Cursor fx:constant="HAND" />

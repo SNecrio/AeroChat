@@ -31,11 +31,11 @@ public class AerochatController {
     @FXML
     private ImageView fondoNegro;
     @FXML
-    private ScrollPane panelConectados;
+    private AnchorPane panelConectados;
     @FXML
     private VBox vboxConectados;
     @FXML
-    private VBox conPop;
+    private Button conectarBoton;
     @FXML
     private Button amigoButton;
     @FXML
@@ -52,6 +52,7 @@ public class AerochatController {
     private interfazCliente cliente;
     private interfazServidor servidor;
     private int userID;
+    private interfazCliente actualUser;
 
     @FXML
     public void initialize() throws Exception{
@@ -108,7 +109,7 @@ public class AerochatController {
         try{
             Conectar(username);
         } catch (Exception e) {
-            System.err.println("Error conectandose a servidor");
+            loginWarning.setText("Error conectandose a servidor");
             throw new RuntimeException(e);
         }
         //try login
@@ -176,7 +177,7 @@ public class AerochatController {
                     Button button = new Button(usuario);
                     button.setPrefWidth(vboxConectados.getWidth());
                     button.setOnAction(event -> {
-                        onUserClick(id);
+                        onUserClick(usuario);
                     });
                     vboxConectados.getChildren().add(button);
                 }
@@ -190,8 +191,7 @@ public class AerochatController {
     protected void onTouchFondoNegro(){
         panelConectados.setDisable(true);
         panelConectados.setOpacity(0);
-        conPop.setDisable(true);
-        conPop.setOpacity(0);
+        conectarBoton.setDisable(true);
 
         panel.getChildren().remove(fondoNegro);
         fondoNegro = null;
@@ -205,34 +205,22 @@ public class AerochatController {
         Scene scene = new Scene(loader.load(), 720, 440);
 
         Stage chat = new Stage();
-        chat.setTitle(cliente.getNombre());
+        chat.setTitle(actualUser.getNombre() + " | Chat");
         chat.setScene(scene);
         chat.show();
-
-        // Obtener el controlador de la nueva ventana
         ChatController controller = loader.getController();
 
-        controller.setUsers(cliente);
+        controller.setUsers(cliente, actualUser);
     }
 
     @FXML
-    protected void onUserClick(int id){
-        conPop.setDisable(false);
-        conPop.setOpacity(1);
-        conPop.toFront();
-
-        //User actualUser = conected.get(id);
-
-        /*
-        if(actualUser is amigo){
-            popUpController.setAmigo(true);
-        }*/
-        boolean esAmigo = true;//!
-
-        if(esAmigo){
-            amigoButton.setText("Eliminar amigo");
-        }else{
-            amigoButton.setText("Añadir amigo");
+    protected void onUserClick(String nombre){
+        try{
+            actualUser = servidor.getCliente(nombre);
+            conectarBoton.setDisable(false);
+        } catch (Exception e) {
+            warningText.setText("Error recuperando usuario");
+            throw new RuntimeException(e);
         }
     }
 
