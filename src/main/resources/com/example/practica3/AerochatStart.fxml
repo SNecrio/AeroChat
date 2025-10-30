@@ -44,7 +44,7 @@
             <Button fx:id="conectarBoton" disable="true" layoutX="6.0" layoutY="295.0" mnemonicParsing="false" onAction="#onAbrirChat" prefHeight="26.0" prefWidth="92.0" text="Conectarse" />
          </children>
       </AnchorPane>
-      <AnchorPane fx:id="loginPane" layoutX="-60.0" layoutY="115.0" prefHeight="182.0" prefWidth="300.0" AnchorPane.bottomAnchor="140.0" AnchorPane.leftAnchor="180.0" AnchorPane.rightAnchor="180.0" AnchorPane.topAnchor="100.0">
+      <AnchorPane fx:id="loginPane" layoutX="170.0" layoutY="115.0" prefHeight="182.0" prefWidth="368.0" AnchorPane.bottomAnchor="140.0" AnchorPane.leftAnchor="170.0" AnchorPane.rightAnchor="180.0" AnchorPane.topAnchor="100.0">
          <children>
             <Label layoutX="14.0" prefHeight="44.0" prefWidth="305.0" text="Introduzca Usuario" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="0.0">
                <font>
@@ -68,6 +68,12 @@
                </font>
             </Label>
             <TextField fx:id="passwordText" layoutX="14.0" layoutY="139.0" AnchorPane.bottomAnchor="17.0" AnchorPane.leftAnchor="14.0" />
+            <Label layoutX="189.0" layoutY="65.0" prefHeight="20.0" prefWidth="109.0" text="IP del servidor:" AnchorPane.bottomAnchor="97.0" AnchorPane.leftAnchor="189.0">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
+            <TextField fx:id="ipText" layoutX="189.0" layoutY="85.0" AnchorPane.bottomAnchor="71.0" AnchorPane.leftAnchor="189.0" />
             <Button layoutX="244.0" layoutY="139.0" mnemonicParsing="false" onAction="#login" text="Iniciar Sesion" AnchorPane.bottomAnchor="17.0" AnchorPane.rightAnchor="14.0" />
          </children>
       </AnchorPane>
@@ -76,8 +82,8 @@
             <VBox prefHeight="332.0" prefWidth="172.0" />
          </content>
       </ScrollPane>
-      <TextField layoutX="526.0" layoutY="44.0" prefHeight="26.0" prefWidth="178.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="44.0" />
-      <Button alignment="CENTER" layoutX="526.0" layoutY="18.0" minHeight="-Infinity" mnemonicParsing="false" onAction="#onAbrirChat" prefHeight="25.0" prefWidth="92.0" text="Añadir" textAlignment="CENTER" AnchorPane.rightAnchor="100.0" AnchorPane.topAnchor="18.0">
+      <TextField fx:id="friendText" disable="true" layoutX="526.0" layoutY="44.0" prefHeight="26.0" prefWidth="178.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="44.0" />
+      <Button fx:id="amigoBoton" alignment="CENTER" disable="true" layoutX="526.0" layoutY="18.0" minHeight="-Infinity" mnemonicParsing="false" onAction="#onAbrirChat" prefHeight="25.0" prefWidth="92.0" text="Añadir" textAlignment="CENTER" AnchorPane.rightAnchor="100.0" AnchorPane.topAnchor="18.0">
          <cursor>
             <Cursor fx:constant="HAND" />
          </cursor>
