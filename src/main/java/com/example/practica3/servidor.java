@@ -13,12 +13,16 @@ public class servidor{
 		InputStreamReader is = new InputStreamReader(System.in);
 		BufferedReader br = new BufferedReader(is);
         try {
+            //Obtemos a IP da maquina do servidor
+            InetAddress address = InetAddress.getLocalHost();
+            String ip = address.getHostAddress();
+
             //Función que rexistra o porto se non o estaba xa
             startRegistry(1099);
 
             //Crea o obxecto remoto
             implementacionServidor exportedObj = new implementacionServidor();
-            String registryURL = "rmi://localhost:1099/aerochat";
+            String registryURL = "rmi://"+ip+":1099/aerochat";
             Naming.rebind(registryURL, exportedObj);
             System.out.println("O servidor rexistrouse exitosamente. Contido actual do rexistro:");
             listRegistry(registryURL);
