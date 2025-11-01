@@ -203,8 +203,10 @@ public class AerochatController {
         //--------------------------------
         vboxConectados.getChildren().clear();
 
+
         int id = 0;
         try {
+            conected = servidor.obtenerClientesActuales();
             for (var usuario : conected) {
                 if(usuario != cliente.getNombre()){
                     Button button = new Button(usuario);

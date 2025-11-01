@@ -23,7 +23,7 @@ public class implementacionServidor extends UnicastRemoteObject
         implementacionCliente clienteNuevo = new implementacionCliente(nome, IP);
 
         clientes.put(nome, clienteNuevo);
-		System.out.println("Cliente " + nome + " conectado con IP " + IP);
+		//System.out.println("Cliente " + nome + " conectado con IP " + IP);
 		
 		//Notificamos aos demais da nova conexion
 		for(Map.Entry<String,interfazCliente> entrada : clientes.entrySet()){
@@ -116,10 +116,48 @@ public class implementacionServidor extends UnicastRemoteObject
 		}
 		return false;
 	}
+
+    public boolean cambiarContrasinal(String nome, String contrasinal, String novo){
+        String cadea;
+        boolean coincide=false;
+
+        try(FileReader f = new FileReader(arquivo)) {
+            BufferedReader b = new BufferedReader(f);
+
+            while ((cadea = b.readLine()) != null) {
+                String[] partes = cadea.split("\\|");
+
+                if (partes[0].equals(nome)) {
+                    byte[] salt = Base64.getDecoder().decode(partes[1]);
+                    byte[] hashGardado = Base64.getDecoder().decode(partes[2]);
+                    byte[] hashActual = hashear(contrasinal, salt);
+                    //Comprobamos se o contrasinal é o mesmo
+                    if(Arrays.equals(hashGardado, hashActual)){
+                        coincide = true;
+                        SecureRandom random = new SecureRandom();
+                        salt = new byte[16];
+                        random.nextBytes(salt);
+                        //Calculamos o hash
+                        byte[] hash = hashear(novo, salt);
+
+                        //Escribimos o usuario co novo contrasinal no arqiuvo
+                        //String novaLinha = nome + "|"+Base64.getEncoder().encodeToString(salt)+"|"+Base64.getEncoder().encodeToString(hash);
+
+                        FileWriter fw = new FileWriter(arquivo, false);
+                        try(BufferedWriter w = new BufferedWriter(fw)){
+                            w.write(nome + "|"+Base64.getEncoder().encodeToString(salt)+"|"+Base64.getEncoder().encodeToString(hash));
+                            w.newLine();
+                        }
+                    }
+                }
+            }
+        }catch(Exception e){
+            System.out.println("Erro: " + e);
+        }
+        return coincide;
+    }
 	
 	private boolean usuarioExiste(String nome) throws Exception{
-		System.out.println("Buscando usuario '" + nome + "' en: " + new File(arquivo).getAbsolutePath());
-
 		String cadea; 
 		File arq = new File(arquivo);
 		if(!arq.exists()) return false;
