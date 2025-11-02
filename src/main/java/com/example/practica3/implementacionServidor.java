@@ -17,13 +17,9 @@ public class implementacionServidor extends UnicastRemoteObject
 	  clientes = new HashMap<>();
 	}
    
-    public interfazCliente registrarCliente(String nome) throws Exception{
+    public void registrarCliente(String nome, interfazCliente clienteNuevo) throws Exception{
 		//Metemos ao novo cliente no hashmap
-        String IP = RemoteServer.getClientHost();
-        implementacionCliente clienteNuevo = new implementacionCliente(nome, IP);
-
         clientes.put(nome, clienteNuevo);
-		//System.out.println("Cliente " + nome + " conectado con IP " + IP);
 		
 		//Notificamos aos demais da nova conexion
 		for(Map.Entry<String,interfazCliente> entrada : clientes.entrySet()){
@@ -39,7 +35,6 @@ public class implementacionServidor extends UnicastRemoteObject
 		}
 		Set<String> actuais = clientes.keySet();
 		ArrayList<String> conectados = new ArrayList<>(actuais);
-        return clienteNuevo;
 	}
 	
 	public void borrarCliente(String nome) throws RemoteException{
@@ -67,8 +62,6 @@ public class implementacionServidor extends UnicastRemoteObject
 	public boolean novoUsuario(String nome, String contrasinal){
 		try{
 			if(usuarioExiste(nome)){
-                //accederUsuario(nome, contrasinal);
-				//System.out.println("Ese nome de usuario xa esta collido. Por favor, escolla outro.");
                 return false;
 			} else {
                 //Hasheamos o contrasinal para que sexa seguro
@@ -119,6 +112,8 @@ public class implementacionServidor extends UnicastRemoteObject
 
     public boolean cambiarContrasinal(String nome, String contrasinal, String novo){
         String cadea;
+        List<String> rescritura = new ArrayList<String>();
+        byte[] salt=null, hash=null;
         boolean coincide=false;
 
         try(FileReader f = new FileReader(arquivo)) {
@@ -128,7 +123,7 @@ public class implementacionServidor extends UnicastRemoteObject
                 String[] partes = cadea.split("\\|");
 
                 if (partes[0].equals(nome)) {
-                    byte[] salt = Base64.getDecoder().decode(partes[1]);
+                    salt = Base64.getDecoder().decode(partes[1]);
                     byte[] hashGardado = Base64.getDecoder().decode(partes[2]);
                     byte[] hashActual = hashear(contrasinal, salt);
                     //Comprobamos se o contrasinal é o mesmo
@@ -138,22 +133,32 @@ public class implementacionServidor extends UnicastRemoteObject
                         salt = new byte[16];
                         random.nextBytes(salt);
                         //Calculamos o hash
-                        byte[] hash = hashear(novo, salt);
+                        hash = hashear(novo, salt);
 
-                        //Escribimos o usuario co novo contrasinal no arqiuvo
-                        //String novaLinha = nome + "|"+Base64.getEncoder().encodeToString(salt)+"|"+Base64.getEncoder().encodeToString(hash);
-
-                        FileWriter fw = new FileWriter(arquivo, false);
-                        try(BufferedWriter w = new BufferedWriter(fw)){
-                            w.write(nome + "|"+Base64.getEncoder().encodeToString(salt)+"|"+Base64.getEncoder().encodeToString(hash));
-                            w.newLine();
+                        rescritura.add(nome + "|"+Base64.getEncoder().encodeToString(salt)+"|"+Base64.getEncoder().encodeToString(hash));
                         }
+                } else {
+                    rescritura.add(cadea);
+                }
+            }
+
+            if(coincide){
+                FileWriter fw = new FileWriter(arquivo, false);
+                try(BufferedWriter w = new BufferedWriter(fw)){
+                    for(String s : rescritura){
+                        w.write(s);
+                        w.newLine();
                     }
                 }
             }
+
         }catch(Exception e){
             System.out.println("Erro: " + e);
         }
+
+
+
+
         return coincide;
     }
 	

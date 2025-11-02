@@ -1,5 +1,7 @@
 package com.example.practica3;
 
+import javafx.application.Platform;
+
 import java.rmi.server.*;
 import java.rmi.*;
 import java.util.ArrayList;
@@ -11,12 +13,14 @@ public class implementacionCliente extends UnicastRemoteObject implements interf
 
     private String name;
     private String IP;
+    private AerochatController controller;
     private Dictionary<String, ChatController> chatsAbiertos;
 
-    public implementacionCliente(String eName, String eIP) throws RemoteException {
+    public implementacionCliente(String eName, String eIP, AerochatController controller) throws RemoteException {
         super();
         this.name = eName;
         this.IP = eIP;
+        this.controller = controller;
         chatsAbiertos = new Hashtable<>();
     }
 
@@ -31,11 +35,15 @@ public class implementacionCliente extends UnicastRemoteObject implements interf
     public void anadirChat(String nombre, ChatController chat){ chatsAbiertos.put(nombre, chat); }
 
     public void notificarLlegada(String nombre) {
-        System.out.println("\n" + nombre + " conectouse.");
+        Platform.runLater(() -> {
+            controller.notiPrincipal.appendText(nombre + " se ha conectado.\n");
+        });
     }
 
     public void notificarSalida(String nombre) {
-        System.out.println("\n" + nombre + " desconectouse.");
+        Platform.runLater(() -> {
+            controller.notiPrincipal.appendText(nombre + " se ha desconectado.\n");
+        });
     }
 
     public void actualizarConectados(ArrayList<String> nombres) {

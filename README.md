@@ -1,8 +1,8 @@
 ## Cambios
-- Ya meti el botoncito de cambiar contraseña, pero no funciona de parte del server, el arreglo deberia ser trivial y lo dejo como ejercicio al lector
-- Nuevo boton para recargar la lista de conectados
-- Ahora no deja poner un nombre que contenga "|"
-- Botones de conectar y elimnar amigos que no hacen nada
+- Ya se puede cambiar la contraseña de un usuario 
+- Ahora, se notifica la conexión/desconexión de un usuario mediante un panel de texto
+- Al salir de la aplicación, el proceso se muere de verdad
+
 
 
 - Avance un poco con las cosas de amigos, en cuanto este implementado en el servidor deberia ser bastante facil que funcione
@@ -10,7 +10,7 @@
 ## Por implementar
 - Modificar la interfaz gráfica de añadir amistad
 - Implementar el envío de solicitudes de amistad
-- Mostrar mensaje de login de amigos (no encontré el cuadro de texto donde ponerlo)
+- Se lanza un error al iniciar la conexión si no se tiene amigos. No falla pero hay que corregirlo.
 
 ## Errores
 - Revisar envío de mensajes. Conecté dos ordenadores y envié mensajes pero nunca se mostraron en la pantalla del otro

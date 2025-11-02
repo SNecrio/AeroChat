@@ -5,6 +5,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -14,9 +15,11 @@ import javafx.scene.layout.BackgroundSize;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
+import java.net.InetAddress;
 import java.rmi.*;
 
 import java.rmi.Naming;
+import java.rmi.server.RemoteServer;
 import java.util.ArrayList;
 
 public class AerochatController {
@@ -67,6 +70,8 @@ public class AerochatController {
     private Label loginWarning;
     @FXML
     private Label contrasenaWarning;
+    @FXML
+    public TextArea notiPrincipal;
 
     private ArrayList<String> conected;
     private ArrayList<interfazCliente> friendList;
@@ -130,6 +135,7 @@ public class AerochatController {
         botonesPrincipal.add(recargaAmigos);
         botonesPrincipal.add(conectarAmigoBoton);
         botonesPrincipal.add(eliminarAmigoBoton);
+
     }
 
     @FXML
@@ -163,7 +169,7 @@ public class AerochatController {
             loginWarning.setText("Error conectandose a servidor");
             throw new RuntimeException(e);
         }
-        //try login
+
         boolean loginSuccess=false;
         try{
             if(servidor.novoUsuario(username,password)) {
@@ -178,7 +184,11 @@ public class AerochatController {
         //Se conecto al servidor bien
         if(loginSuccess){
             try{
-                cliente = servidor.registrarCliente(username);
+                InetAddress localHost = InetAddress.getLocalHost();
+                String IP = localHost.getHostAddress();
+                cliente = new implementacionCliente(username,IP,this);
+
+                servidor.registrarCliente(username, cliente);
                 conected = servidor.obtenerClientesActuales();
                 cliente.actualizarConectados(conected);
 
@@ -186,6 +196,7 @@ public class AerochatController {
                 stage.setOnCloseRequest(event -> {
                     try {
                         servidor.borrarCliente(cliente.getNombre());
+                        System.exit(0);
                     } catch (RemoteException e) {
                         throw new RuntimeException(e);
                     }
@@ -213,7 +224,19 @@ public class AerochatController {
             panel.getChildren().remove(fondoNegro);
             fondoNegro = null;
 
+            notiPrincipal = new TextArea();
+            notiPrincipal.setEditable(false);
+            notiPrincipal.setWrapText(true);
+            notiPrincipal.setPrefWidth(350);
+            notiPrincipal.setPrefHeight(280);
+            notiPrincipal.setLayoutX(10);
+            notiPrincipal.setLayoutY(100);
+            notiPrincipal.setOpacity(0.85);
+            panel.getChildren().add(notiPrincipal);
+
             ponerAmigos();
+
+
 
         }else{
             loginWarning.setText("Contraseña no coincidente con ese usuario");
@@ -418,4 +441,5 @@ public class AerochatController {
         //warningText.setText("Solicitud enviada");
 
     }
+
 }
