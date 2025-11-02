@@ -25,6 +25,11 @@
          <cursor>
             <Cursor fx:constant="HAND" />
          </cursor></Button>
+      <Button fx:id="contrasenaBoton" disable="true" layoutX="160.0" layoutY="374.0" mnemonicParsing="false" onAction="#onCambiarContrasena" prefWidth="122.0" text="Cambiar contraseña" AnchorPane.bottomAnchor="23.0" AnchorPane.leftAnchor="160.0">
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
+      </Button>
       <Label fx:id="warningText" layoutX="18.0" layoutY="67.0" prefHeight="25.0" prefWidth="269.0" textFill="RED" AnchorPane.leftAnchor="18.0" AnchorPane.topAnchor="67.0">
          <font>
             <Font size="18.0" />
@@ -32,7 +37,7 @@
       </Label>
       <AnchorPane fx:id="panelConectados" disable="true" layoutX="221.0" layoutY="48.0" opacity="0.0" AnchorPane.bottomAnchor="48.0" AnchorPane.leftAnchor="221.0" AnchorPane.rightAnchor="221.0" AnchorPane.topAnchor="48.0">
          <children>
-            <ScrollPane prefHeight="290.0" prefWidth="276.0">
+            <ScrollPane fx:id="scrollConectados" prefHeight="290.0" prefWidth="276.0">
                <content>
                   <VBox fx:id="vboxConectados" alignment="TOP_CENTER" prefHeight="286.0" prefWidth="260.0">
                      <children>
@@ -42,6 +47,8 @@
                </content>
             </ScrollPane>
             <Button fx:id="conectarBoton" disable="true" layoutX="6.0" layoutY="295.0" mnemonicParsing="false" onAction="#onAbrirChat" prefHeight="26.0" prefWidth="92.0" text="Conectarse" />
+            <Button fx:id="conectarBoton1" disable="true" layoutX="107.0" layoutY="295.0" mnemonicParsing="false" onAction="#onAbrirChat" prefHeight="26.0" prefWidth="92.0" text="Añadir amigo" />
+            <Button layoutX="236.0" layoutY="295.0" mnemonicParsing="false" onAction="#botonesConectados" prefHeight="26.0" prefWidth="26.0" text="↺" />
          </children>
       </AnchorPane>
       <AnchorPane fx:id="loginPane" layoutX="170.0" layoutY="115.0" prefHeight="182.0" prefWidth="368.0" AnchorPane.bottomAnchor="140.0" AnchorPane.leftAnchor="170.0" AnchorPane.rightAnchor="180.0" AnchorPane.topAnchor="100.0">
@@ -77,13 +84,51 @@
             <Button layoutX="244.0" layoutY="139.0" mnemonicParsing="false" onAction="#login" text="Iniciar Sesion" AnchorPane.bottomAnchor="17.0" AnchorPane.rightAnchor="14.0" />
          </children>
       </AnchorPane>
-      <ScrollPane layoutX="526.0" layoutY="72.0" prefHeight="338.0" prefWidth="178.0" AnchorPane.bottomAnchor="12.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="72.0">
+      <AnchorPane fx:id="panelContrasena" disable="true" layoutX="170.0" layoutY="99.0" opacity="0.0" prefHeight="182.0" prefWidth="368.0">
+         <children>
+            <Label layoutX="14.0" prefHeight="44.0" prefWidth="305.0" text="Cambiar contraseña" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="0.0">
+               <font>
+                  <Font size="31.0" />
+               </font>
+            </Label>
+            <Label fx:id="contrasenaWarning" layoutX="14.0" layoutY="31.0" prefHeight="31.0" prefWidth="337.0" textFill="RED">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
+            <Label layoutX="14.0" layoutY="65.0" prefHeight="20.0" prefWidth="135.0" text="Contraseña actual:" AnchorPane.bottomAnchor="97.0" AnchorPane.leftAnchor="14.0">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
+            <TextField fx:id="oldPasswordText" layoutX="14.0" layoutY="85.0" AnchorPane.bottomAnchor="71.0" AnchorPane.leftAnchor="14.0" />
+            <Label layoutX="14.0" layoutY="119.0" prefHeight="20.0" prefWidth="122.0" text="Contraseña nueva:" AnchorPane.bottomAnchor="43.0" AnchorPane.leftAnchor="14.0">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
+            <TextField fx:id="newPasswordText" layoutX="14.0" layoutY="139.0" AnchorPane.bottomAnchor="17.0" AnchorPane.leftAnchor="14.0" />
+            <Button layoutX="244.0" layoutY="139.0" mnemonicParsing="false" onAction="#changePassword" text="Cambiar" AnchorPane.bottomAnchor="17.0" AnchorPane.rightAnchor="14.0" />
+         </children>
+      </AnchorPane>
+      <ScrollPane layoutX="526.0" layoutY="102.0" prefHeight="308.0" prefWidth="178.0" AnchorPane.bottomAnchor="12.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="102.0">
          <content>
-            <VBox prefHeight="332.0" prefWidth="172.0" />
+            <VBox prefHeight="300.0" prefWidth="172.0" />
          </content>
       </ScrollPane>
       <TextField fx:id="friendText" disable="true" layoutX="526.0" layoutY="44.0" prefHeight="26.0" prefWidth="178.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="44.0" />
-      <Button fx:id="amigoBoton" alignment="CENTER" disable="true" layoutX="526.0" layoutY="18.0" minHeight="-Infinity" mnemonicParsing="false" onAction="#onAbrirChat" prefHeight="25.0" prefWidth="92.0" text="Añadir" textAlignment="CENTER" AnchorPane.rightAnchor="100.0" AnchorPane.topAnchor="18.0">
+      <Button fx:id="anadirAmigoBoton" alignment="CENTER" disable="true" layoutX="526.0" layoutY="18.0" minHeight="-Infinity" mnemonicParsing="false" onAction="#anadirAmigo" prefHeight="25.0" prefWidth="61.0" text="Añadir" textAlignment="CENTER" AnchorPane.rightAnchor="100.0" AnchorPane.topAnchor="18.0">
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
+      </Button>
+      <Button fx:id="recargaAmigos" disable="true" layoutX="525.0" layoutY="18.0" mnemonicParsing="false" onAction="#ponerAmigos" prefHeight="26.0" prefWidth="26.0" text="↺" AnchorPane.rightAnchor="167.0" AnchorPane.topAnchor="18.0" />
+      <Button fx:id="conectarAmigoBoton" disable="true" layoutX="527.0" layoutY="76.0" mnemonicParsing="false" onAction="#onGenteConectada" prefHeight="25.0" prefWidth="86.0" text="Conectar" AnchorPane.rightAnchor="105.0" AnchorPane.topAnchor="76.0">
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
+      </Button>
+      <Button fx:id="eliminarAmigoBoton" disable="true" layoutX="615.0" layoutY="76.0" mnemonicParsing="false" onAction="#onGenteConectada" prefHeight="25.0" prefWidth="86.0" text="Eliminar" AnchorPane.rightAnchor="17.0" AnchorPane.topAnchor="76.0">
          <cursor>
             <Cursor fx:constant="HAND" />
          </cursor>

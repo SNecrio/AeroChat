@@ -90,6 +90,9 @@ public class ChatController {
             Label mensaje = new Label(messageArea.getText());
             chatbox.getChildren().add(usuario);
             chatbox.getChildren().add(mensaje);
+
+
+
         } catch (RemoteException e) {
             System.err.println("Error en el mandado de mensaje");
             throw new RuntimeException(e);

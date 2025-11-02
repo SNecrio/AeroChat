@@ -2,11 +2,9 @@ package com.example.practica3;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -16,9 +14,7 @@ import javafx.scene.layout.BackgroundSize;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
-import java.net.InetAddress;
 import java.rmi.*;
-import java.io.*;
 
 import java.rmi.Naming;
 import java.util.ArrayList;
@@ -34,13 +30,25 @@ public class AerochatController {
     @FXML
     private AnchorPane panelConectados;
     @FXML
+    private AnchorPane panelContrasena;
+    @FXML
     private VBox vboxConectados;
+    @FXML
+    private VBox vboxAmigos;
     @FXML
     private Button conectarBoton;
     @FXML
     private Button abrirUsuariosBoton;
     @FXML
-    private Button amigoBoton;
+    private Button contrasenaBoton;
+    @FXML
+    private Button anadirAmigoBoton;
+    @FXML
+    private Button recargaAmigos;
+    @FXML
+    private Button conectarAmigoBoton;
+    @FXML
+    private Button eliminarAmigoBoton;
     @FXML
     private AnchorPane loginPane;
     @FXML
@@ -50,20 +58,30 @@ public class AerochatController {
     @FXML
     private TextField ipText;
     @FXML
+    private TextField oldPasswordText;
+    @FXML
+    private TextField newPasswordText;
+    @FXML
     private TextField friendText;
     @FXML
     private Label loginWarning;
+    @FXML
+    private Label contrasenaWarning;
 
-    private FXMLLoader connectedPopUp;
     private ArrayList<String> conected;
+    private ArrayList<interfazCliente> friendList;
+
     private interfazCliente cliente;
     private interfazServidor servidor;
     private interfazCliente actualUser;
 
+    private Image backgroundImageLogin;
+    private BackgroundImage backgroundLogin;
+
+    private ArrayList<Button> botonesPrincipal;
+
     @FXML
     public void initialize() throws Exception{
-
-        connectedPopUp = new FXMLLoader(getClass().getResource("FriendUser.fxml"));
 
         Image backgroundImage = new Image(getClass().getResource("aeroBackground.jpg").toExternalForm());
         BackgroundSize backgroundSize = new BackgroundSize(
@@ -91,8 +109,8 @@ public class AerochatController {
             }
         });
 
-        Image backgroundImageLogin = new Image(getClass().getResource("loginBackground.jpeg").toExternalForm());
-        BackgroundImage backgroundLogin = new BackgroundImage(
+        backgroundImageLogin = new Image(getClass().getResource("loginBackground.jpeg").toExternalForm());
+        backgroundLogin = new BackgroundImage(
                 backgroundImageLogin,
                 BackgroundRepeat.NO_REPEAT,
                 BackgroundRepeat.NO_REPEAT,
@@ -102,6 +120,16 @@ public class AerochatController {
         loginPane.setBackground(new Background(backgroundLogin));
         loginPane.toFront();
 
+        panelContrasena.setBackground(null);
+        panelContrasena.setBackground(new Background(backgroundLogin));
+
+        botonesPrincipal = new ArrayList<>();
+        botonesPrincipal.add(abrirUsuariosBoton);
+        botonesPrincipal.add(contrasenaBoton);
+        botonesPrincipal.add(anadirAmigoBoton);
+        botonesPrincipal.add(recargaAmigos);
+        botonesPrincipal.add(conectarAmigoBoton);
+        botonesPrincipal.add(eliminarAmigoBoton);
     }
 
     @FXML
@@ -115,12 +143,17 @@ public class AerochatController {
             loginWarning.setText("Introduzca un usuario valido");
             return;
         }
+        if(username.contains("|")){
+            loginWarning.setText("Los usuarios no pueden contener '|'");
+            return;
+        }
+
         if(password.isBlank()){
             loginWarning.setText("Introduzca una contraseña valida");
             return;
         }
         if(ip.isBlank()){
-            loginWarning.setText("Introduzca una contraseña valida");
+            loginWarning.setText("Introduzca una IP valida");
             return;
         }
 
@@ -157,23 +190,73 @@ public class AerochatController {
                         throw new RuntimeException(e);
                     }
                 });
+
+                try{
+                    //Obtener lista de amigos
+                } catch (Exception e) {
+                    warningText.setText("No se pudo obtener la lista de amigos");
+                    throw new RuntimeException(e);
+                }
             } catch (Exception e) {
-                System.err.println("No se pudo obtener la lista de usuarios actuales");
+                warningText.setText("No se pudo obtener la lista de usuarios actuales");
                 throw new RuntimeException(e);
             }
 
-            amigoBoton.setDisable(false);
             friendText.setDisable(false);
-            abrirUsuariosBoton.setDisable(false);
+
+            for(var boton : botonesPrincipal)
+                boton.setDisable(false);
+
             loginPane.setDisable(true);
             loginPane.setOpacity(0);
 
             panel.getChildren().remove(fondoNegro);
             fondoNegro = null;
-            return;
+
+            ponerAmigos();
+
         }else{
             loginWarning.setText("Contraseña no coincidente con ese usuario");
+        }
+    }
+
+    @FXML
+    private void changePassword(){
+
+        String oldPassword = oldPasswordText.getText();
+        String newPassword = newPasswordText.getText();
+
+        if(oldPassword.isBlank()){
+            contrasenaWarning.setText("Introduzca contraseñas validas");
             return;
+        }
+        if(newPassword.isBlank()){
+            contrasenaWarning.setText("Introduzca contraseñas validas");
+            return;
+        }
+
+        boolean success = false;
+        try{
+            success = servidor.cambiarContrasinal(cliente.getNombre(), oldPassword, newPassword);
+        } catch (Exception e) {
+            contrasenaWarning.setText("Error cambiando contraseña");
+            throw new RuntimeException(e);
+        }
+
+        if(!success){
+            contrasenaWarning.setText("Tu contraseña no es la introducida");
+        }else{
+            warningText.setText("Contraseña cambiada exitosamente");
+
+            friendText.setDisable(false);
+            for(var boton : botonesPrincipal)
+                boton.setDisable(false);
+
+            panelContrasena.setDisable(true);
+            panelContrasena.setOpacity(0);
+
+            panel.getChildren().remove(fondoNegro);
+            fondoNegro = null;
         }
     }
 
@@ -184,33 +267,55 @@ public class AerochatController {
 
     @FXML
     protected void onGenteConectada() {
+        crearFondoNegro(0);
 
+        friendText.setDisable(true);
+        for(var boton : botonesPrincipal)
+            boton.setDisable(true);
+
+        panelConectados.setDisable(false);
+        panelConectados.setOpacity(1);
+        panelConectados.toFront();
+
+        botonesConectados();
+    }
+
+    private void crearFondoNegro(int panelID){
         fondoNegro = new ImageView();
         fondoNegro.setImage(new Image(getClass().getResource("fondoNegro.jpg").toExternalForm()));
         fondoNegro.setFitWidth(10000);
         fondoNegro.setFitHeight(10000);
         fondoNegro.setOpacity(0.35d);
         fondoNegro.setDisable(false);
-        fondoNegro.setOnMouseClicked(event -> {onTouchFondoNegro();});
+        fondoNegro.setOnMouseClicked(event -> {onTouchFondoNegro(panelID);});
 
         panel.getChildren().add(fondoNegro);
+    }
 
-        abrirUsuariosBoton.setDisable(true);
-        panelConectados.setDisable(false);
-        panelConectados.setOpacity(1);
-        panelConectados.toFront();
+    @FXML
+    protected void onCambiarContrasena() {
+        crearFondoNegro(1);
 
-        //--------------------------------
+        friendText.setDisable(true);
+        for(var boton : botonesPrincipal)
+            boton.setDisable(true);
+
+        panelContrasena.setDisable(false);
+        panelContrasena.setOpacity(1);
+        panelContrasena.toFront();
+    }
+
+    @FXML
+    protected void botonesConectados(){
         vboxConectados.getChildren().clear();
-
 
         int id = 0;
         try {
             conected = servidor.obtenerClientesActuales();
             for (var usuario : conected) {
-                if(usuario != cliente.getNombre()){
+                if(!usuario.equals(cliente.getNombre())){
                     Button button = new Button(usuario);
-                    button.setPrefWidth(vboxConectados.getWidth());
+                    button.setPrefWidth(panelConectados.getWidth());
                     button.setOnAction(event -> {
                         onUserClick(usuario);
                     });
@@ -223,11 +328,24 @@ public class AerochatController {
     }
 
     @FXML
-    protected void onTouchFondoNegro(){
-        panelConectados.setDisable(true);
-        panelConectados.setOpacity(0);
+    protected void onTouchFondoNegro(int panelID){
+
+        switch (panelID){
+            default:
+            case 0:
+                panelConectados.setDisable(true);
+                panelConectados.setOpacity(0);
+                break;
+            case 1:
+                panelContrasena.setDisable(true);
+                panelContrasena.setOpacity(0);
+                break;
+        }
         conectarBoton.setDisable(true);
-        abrirUsuariosBoton.setDisable(false);
+
+        friendText.setDisable(false);
+        for(var boton : botonesPrincipal)
+            boton.setDisable(false);
 
         panel.getChildren().remove(fondoNegro);
         fondoNegro = null;
@@ -246,6 +364,7 @@ public class AerochatController {
         chat.show();
         ChatController controller = loader.getController();
 
+        cliente.anadirChat(actualUser.getNombre(),controller);
         controller.setUsers(cliente, actualUser);
     }
 
@@ -261,12 +380,42 @@ public class AerochatController {
     }
 
     @FXML
-    public void conectar() {
+    private void ponerAmigos(){
+
+        try{
+            for(var amigo : friendList){
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("FriendUser.fxml"));
+                FriendController controlador = loader.getController();
+                AnchorPane panelAmigo = loader.load();
+
+                boolean conectado = false;
+                if(conected.contains(amigo.getNombre())){
+                    conectado = true;
+                }
+                controlador.setUser(amigo,conectado);
+                vboxAmigos.getChildren().add(panelAmigo);
+            }
+        } catch (Exception e) {
+            warningText.setText("Error mostrando amigos");
+            throw new RuntimeException(e);
+        }
 
     }
 
     @FXML
     public void anadirAmigo() {
+
+        String nombre = friendText.getText();
+
+        if(nombre.isBlank() || nombre.contains("|")){
+            warningText.setText("Introduzca un nombre valido");
+            return;
+        }
+
+        friendText.setText("");
+
+        //enviarAmistad
+        //warningText.setText("Solicitud enviada");
 
     }
 }

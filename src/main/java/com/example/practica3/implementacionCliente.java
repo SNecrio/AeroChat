@@ -3,16 +3,21 @@ package com.example.practica3;
 import java.rmi.server.*;
 import java.rmi.*;
 import java.util.ArrayList;
+import java.util.Dictionary;
+import java.util.Enumeration;
+import java.util.Hashtable;
 
 public class implementacionCliente extends UnicastRemoteObject implements interfazCliente {
 
     private String name;
     private String IP;
+    private Dictionary<String, ChatController> chatsAbiertos;
 
     public implementacionCliente(String eName, String eIP) throws RemoteException {
         super();
         this.name = eName;
         this.IP = eIP;
+        chatsAbiertos = new Hashtable<>();
     }
 
     public String getNombre(){
@@ -22,6 +27,8 @@ public class implementacionCliente extends UnicastRemoteObject implements interf
     public String getIP(){
         return IP;
     }
+
+    public void anadirChat(String nombre, ChatController chat){ chatsAbiertos.put(nombre, chat); }
 
     public void notificarLlegada(String nombre) {
         System.out.println("\n" + nombre + " conectouse.");

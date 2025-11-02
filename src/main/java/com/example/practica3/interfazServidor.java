@@ -25,4 +25,6 @@ public interface interfazServidor extends Remote {
 
     public interfazCliente getCliente(String nome) throws Exception;
 
-    }
+    public boolean cambiarContrasinal(String nome, String contrasinal, String novo)
+            throws java.rmi.RemoteException;;
+}
