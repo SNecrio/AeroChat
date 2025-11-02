@@ -10,7 +10,8 @@ import java.nio.charset.StandardCharsets;
 public class implementacionServidor extends UnicastRemoteObject
     implements interfazServidor {
 	private HashMap<String, interfazCliente> clientes;
-	private static String arquivo = "usuarios.txt";
+	private static String arquivoUsuarios = "usuarios.txt";
+    //private static String arquivoSolicitudes = "solicitudes.txt";
   
 	public implementacionServidor() throws RemoteException {
       super( );
@@ -73,7 +74,7 @@ public class implementacionServidor extends UnicastRemoteObject
                 byte[] hash = hashear(contrasinal, salt);
 
                 //Escribimos o novo usuario no arqiuvo
-                FileWriter f = new FileWriter(arquivo, true);
+                FileWriter f = new FileWriter(arquivoUsuarios, true);
                 try(BufferedWriter w = new BufferedWriter(f)){
                     w.write(nome + "|"+Base64.getEncoder().encodeToString(salt)+"|"+Base64.getEncoder().encodeToString(hash));
                     w.newLine();
@@ -90,7 +91,7 @@ public class implementacionServidor extends UnicastRemoteObject
 	
 	public boolean accederUsuario(String nome, String contrasinal){
 		String cadea; 
-		try(FileReader f = new FileReader(arquivo)){
+		try(FileReader f = new FileReader(arquivoUsuarios)){
 			BufferedReader b = new BufferedReader(f);
 
 			while((cadea = b.readLine())!=null){
@@ -116,7 +117,7 @@ public class implementacionServidor extends UnicastRemoteObject
         byte[] salt=null, hash=null;
         boolean coincide=false;
 
-        try(FileReader f = new FileReader(arquivo)) {
+        try(FileReader f = new FileReader(arquivoUsuarios)) {
             BufferedReader b = new BufferedReader(f);
 
             while ((cadea = b.readLine()) != null) {
@@ -143,7 +144,7 @@ public class implementacionServidor extends UnicastRemoteObject
             }
 
             if(coincide){
-                FileWriter fw = new FileWriter(arquivo, false);
+                FileWriter fw = new FileWriter(arquivoUsuarios, false);
                 try(BufferedWriter w = new BufferedWriter(fw)){
                     for(String s : rescritura){
                         w.write(s);
@@ -164,10 +165,10 @@ public class implementacionServidor extends UnicastRemoteObject
 	
 	private boolean usuarioExiste(String nome) throws Exception{
 		String cadea; 
-		File arq = new File(arquivo);
+		File arq = new File(arquivoUsuarios);
 		if(!arq.exists()) return false;
 		
-		FileReader f = new FileReader(arquivo);
+		FileReader f = new FileReader(arquivoUsuarios);
 		BufferedReader b = new BufferedReader(f);
 		while((cadea = b.readLine())!=null){
 			if(cadea.startsWith(nome+"|")) return true;

@@ -7,6 +7,6 @@
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="44.0" prefWidth="178.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="FriendController">
    <children>
       <Button fx:id="nombreLabel" alignment="TOP_LEFT" mnemonicParsing="false" prefHeight="44.0" prefWidth="178.0" text="Amigo_Nombre" />
-      <Label fx:id="conectadoLabel" layoutX="8.0" layoutY="22.0" text="Conectado" textFill="#04ff00" />
+      <Label fx:id="conectadoLabel" layoutX="8.0" layoutY="22.0" text="Conectado" textFill="#cf0000" />
    </children>
 </AnchorPane>

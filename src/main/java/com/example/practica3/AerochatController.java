@@ -67,11 +67,11 @@ public class AerochatController {
     @FXML
     private TextField friendText;
     @FXML
+    public TextArea notiPrincipal;
+    @FXML
     private Label loginWarning;
     @FXML
     private Label contrasenaWarning;
-    @FXML
-    public TextArea notiPrincipal;
 
     private ArrayList<String> conected;
     private ArrayList<interfazCliente> friendList;
@@ -213,31 +213,16 @@ public class AerochatController {
                 throw new RuntimeException(e);
             }
 
+            //Activar botones y cerrar panel
             friendText.setDisable(false);
-
             for(var boton : botonesPrincipal)
                 boton.setDisable(false);
-
             loginPane.setDisable(true);
             loginPane.setOpacity(0);
-
             panel.getChildren().remove(fondoNegro);
             fondoNegro = null;
 
-            notiPrincipal = new TextArea();
-            notiPrincipal.setEditable(false);
-            notiPrincipal.setWrapText(true);
-            notiPrincipal.setPrefWidth(350);
-            notiPrincipal.setPrefHeight(280);
-            notiPrincipal.setLayoutX(10);
-            notiPrincipal.setLayoutY(100);
-            notiPrincipal.setOpacity(0.85);
-            panel.getChildren().add(notiPrincipal);
-
             ponerAmigos();
-
-
-
         }else{
             loginWarning.setText("Contraseña no coincidente con ese usuario");
         }
@@ -303,31 +288,6 @@ public class AerochatController {
         botonesConectados();
     }
 
-    private void crearFondoNegro(int panelID){
-        fondoNegro = new ImageView();
-        fondoNegro.setImage(new Image(getClass().getResource("fondoNegro.jpg").toExternalForm()));
-        fondoNegro.setFitWidth(10000);
-        fondoNegro.setFitHeight(10000);
-        fondoNegro.setOpacity(0.35d);
-        fondoNegro.setDisable(false);
-        fondoNegro.setOnMouseClicked(event -> {onTouchFondoNegro(panelID);});
-
-        panel.getChildren().add(fondoNegro);
-    }
-
-    @FXML
-    protected void onCambiarContrasena() {
-        crearFondoNegro(1);
-
-        friendText.setDisable(true);
-        for(var boton : botonesPrincipal)
-            boton.setDisable(true);
-
-        panelContrasena.setDisable(false);
-        panelContrasena.setOpacity(1);
-        panelContrasena.toFront();
-    }
-
     @FXML
     protected void botonesConectados(){
         vboxConectados.getChildren().clear();
@@ -336,7 +296,7 @@ public class AerochatController {
         try {
             conected = servidor.obtenerClientesActuales();
             for (var usuario : conected) {
-                if(!usuario.equals(cliente.getNombre())){
+                if(usuario.equals(cliente.getNombre())){
                     Button button = new Button(usuario);
                     button.setPrefWidth(panelConectados.getWidth());
                     button.setOnAction(event -> {
@@ -350,6 +310,17 @@ public class AerochatController {
         }
     }
 
+    private void crearFondoNegro(int panelID){
+        fondoNegro = new ImageView();
+        fondoNegro.setImage(new Image(getClass().getResource("fondoNegro.jpg").toExternalForm()));
+        fondoNegro.setFitWidth(10000);
+        fondoNegro.setFitHeight(10000);
+        fondoNegro.setOpacity(0.35d);
+        fondoNegro.setDisable(false);
+        fondoNegro.setOnMouseClicked(event -> {onTouchFondoNegro(panelID);});
+
+        panel.getChildren().add(fondoNegro);
+    }
     @FXML
     protected void onTouchFondoNegro(int panelID){
 
@@ -373,6 +344,19 @@ public class AerochatController {
         panel.getChildren().remove(fondoNegro);
         fondoNegro = null;
         warningText.setText("");
+    }
+
+    @FXML
+    protected void onCambiarContrasena() {
+        crearFondoNegro(1);
+
+        friendText.setDisable(true);
+        for(var boton : botonesPrincipal)
+            boton.setDisable(true);
+
+        panelContrasena.setDisable(false);
+        panelContrasena.setOpacity(1);
+        panelContrasena.toFront();
     }
 
     @FXML
@@ -441,5 +425,4 @@ public class AerochatController {
         //warningText.setText("Solicitud enviada");
 
     }
-
 }

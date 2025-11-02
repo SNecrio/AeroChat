@@ -5,12 +5,14 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
+import javafx.stage.Stage;
 
-import java.net.InetAddress;
-import java.rmi.Naming;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.Socket;
 import java.rmi.RemoteException;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -32,6 +34,14 @@ public class ChatController {
     private interfazCliente cliente;
     private interfazCliente destino;
     private interfazServidor servidor;
+    private String IPdestino;
+    private int puerto = 1099;
+
+    private BufferedReader entrada;
+    private PrintWriter salida;
+    private Socket socket;
+
+    private ChatThread hilo;
 
     @FXML
     public void initialize() throws Exception{
@@ -71,6 +81,29 @@ public class ChatController {
         chatbox.setBackground(new Background(backgroundChat));
 
         chatbox.toFront();
+
+
+        IPdestino = destino.getIP();
+
+        try{
+            socket = new Socket(IPdestino,puerto);
+            salida = new PrintWriter(socket.getOutputStream(), true);
+            hilo = new ChatThread("Receptor",socket,this);
+            hilo.start();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        Stage stage = (Stage) panel.getScene().getWindow();
+        stage.setOnCloseRequest(event -> {
+            try {
+                salida.println("USR DESCONECTADO");
+                System.exit(0);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
+
     }
 
     public void setUsers(interfazCliente cliente, interfazCliente destino) throws Exception{
@@ -82,35 +115,43 @@ public class ChatController {
     @FXML
     protected void enviarMensaje(){
 
-        if(messageArea.getText().isBlank()){
+        String mensajeEnviar = messageArea.getText();
+        if(mensajeEnviar.isBlank()){
             return;
         }
         try{
             Label usuario = new Label(LocalTime.now().getHour() + ":" + LocalTime.now().getMinute() + "| " + cliente.getNombre());
-            Label mensaje = new Label(messageArea.getText());
+            Label mensaje = new Label(mensajeEnviar);
             chatbox.getChildren().add(usuario);
             chatbox.getChildren().add(mensaje);
 
-
+            salida.println(mensajeEnviar);
 
         } catch (RemoteException e) {
             System.err.println("Error en el mandado de mensaje");
             throw new RuntimeException(e);
         }
 
-        Platform.runLater(() -> scroll.setVvalue(1.0));
+        chatbox.layout();
+        scroll.setVvalue(scroll.getVmax());
 
         messageArea.setText("");
     }
 
     @FXML
-    protected void recibirMensaje() throws Exception{
+    protected void recibirMensaje(String mensajeRecibido) throws Exception{
+
+        if(mensajeRecibido.equalsIgnoreCase("USR DESCONECTADO")){
+            Label mensaje = new Label(destino.getNombre() + " se ha desconectado");
+            mensaje.setStyle("-fx-text-fill: #cf0000;"); //Rojo
+            chatbox.getChildren().add(mensaje);
+            return;
+        }
 
         Label usuario = new Label(LocalTime.now().getHour() + ":" + LocalTime.now().getMinute() + "| " + destino.getNombre());
-        Label mensaje = new Label(messageArea.getText());
+        Label mensaje = new Label(mensajeRecibido);
 
         chatbox.getChildren().add(usuario);
         chatbox.getChildren().add(mensaje);
     }
-
 }
