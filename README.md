@@ -1,11 +1,6 @@
 ## Cambios
-- Ya se puede cambiar la contraseña de un usuario 
-- Ahora, se notifica la conexión/desconexión de un usuario mediante un panel de texto
-- Al salir de la aplicación, el proceso se muere de verdad
 
-
-
-- Avance un poco con las cosas de amigos, en cuanto este implementado en el servidor deberia ser bastante facil que funcione
+- He intentado hacer el paso de mensajes, no he podido
 
 ## Por implementar
 - Modificar la interfaz gráfica de añadir amistad
@@ -14,7 +9,6 @@
 
 ## Errores
 - Revisar envío de mensajes. Conecté dos ordenadores y envié mensajes pero nunca se mostraron en la pantalla del otro
-- (Es que no lo hice xd)
 
 # AeroChat
 Chat P2P con servidor RMI para sincronizado
