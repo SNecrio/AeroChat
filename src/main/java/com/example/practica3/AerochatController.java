@@ -20,6 +20,7 @@ import java.rmi.*;
 
 import java.rmi.Naming;
 import java.rmi.server.RemoteServer;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 
 public class AerochatController {
@@ -296,7 +297,7 @@ public class AerochatController {
         try {
             conected = servidor.obtenerClientesActuales();
             for (var usuario : conected) {
-                if(usuario.equals(cliente.getNombre())){
+                if(!usuario.equals(cliente.getNombre())){
                     Button button = new Button(usuario);
                     button.setPrefWidth(panelConectados.getWidth());
                     button.setOnAction(event -> {
@@ -362,24 +363,34 @@ public class AerochatController {
     @FXML
     protected void onAbrirChat() throws Exception{
 
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("AerochatChat.fxml"));
-        Scene scene = new Scene(loader.load(), 720, 440);
+        System.out.println("Nombre: " + actualUser.getNombre());
+        try{
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("AerochatChat.fxml"));
+            Scene scene = new Scene(loader.load(), 720, 440);
 
-        Stage chat = new Stage();
-        chat.setTitle(actualUser.getNombre() + " | Chat");
-        chat.setScene(scene);
-        chat.show();
-        ChatController controller = loader.getController();
+            Stage chat = new Stage();
+            chat.setTitle(actualUser.getNombre() + " | Chat");
+            chat.setScene(scene);
+            chat.show();
+            ChatController controller = loader.getController();
 
-        cliente.anadirChat(actualUser.getNombre(),controller);
-        controller.setUsers(cliente, actualUser);
+
+            cliente.anadirChat(actualUser.getNombre(),controller);
+            controller.setUsers(cliente, actualUser);
+        } catch (Exception e) {
+            throw new Exception(e);
+        }
+
     }
 
     @FXML
     protected void onUserClick(String nombre){
+        System.out.println(nombre);
+
         try{
             actualUser = servidor.getCliente(nombre);
             conectarBoton.setDisable(false);
+            System.out.println(actualUser.getNombre() + actualUser.getIP());
         } catch (Exception e) {
             warningText.setText("Error recuperando usuario");
             throw new RuntimeException(e);

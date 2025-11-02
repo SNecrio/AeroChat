@@ -81,10 +81,15 @@ public class ChatController {
         chatbox.setBackground(new Background(backgroundChat));
 
         chatbox.toFront();
+    }
 
+    public void setUsers(interfazCliente cliente, interfazCliente destino) throws Exception{
+        this.cliente = cliente;
+        this.destino = destino;
+        usuarioLabel.setText(destino.getNombre());
 
+        //Configuramos el socket para el envio de mensajes
         IPdestino = destino.getIP();
-
         try{
             socket = new Socket(IPdestino,puerto);
             salida = new PrintWriter(socket.getOutputStream(), true);
@@ -103,13 +108,6 @@ public class ChatController {
                 throw new RuntimeException(e);
             }
         });
-
-    }
-
-    public void setUsers(interfazCliente cliente, interfazCliente destino) throws Exception{
-        this.cliente = cliente;
-        this.destino = destino;
-        usuarioLabel.setText(destino.getNombre());
     }
 
     @FXML

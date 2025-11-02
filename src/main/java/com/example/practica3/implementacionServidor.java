@@ -157,9 +157,6 @@ public class implementacionServidor extends UnicastRemoteObject
             System.out.println("Erro: " + e);
         }
 
-
-
-
         return coincide;
     }
 	
@@ -177,7 +174,13 @@ public class implementacionServidor extends UnicastRemoteObject
 	}
 
     public interfazCliente getCliente(String nome) throws Exception{
-        return clientes.get(nome);
+
+        try{
+            return clientes.get(nome);
+        } catch (Exception e) {
+            System.err.println("No se encontro usuario con ese nombre");
+            throw new RuntimeException(e);
+        }
     }
 	
 	private byte[] hashear(String contrasinal, byte[] salt) throws NoSuchAlgorithmException{
