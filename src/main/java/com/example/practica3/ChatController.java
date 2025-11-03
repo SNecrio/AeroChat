@@ -30,12 +30,8 @@ public class ChatController {
     @FXML
     private Label usuarioLabel;
 
-    private ArrayList<interfazCliente> conected;
-    private interfazCliente cliente;
-    private interfazCliente destino;
+    private String destino;
     private interfazServidor servidor;
-    private String IPdestino;
-    private int puerto = 1099;
 
     private BufferedReader entrada;
     private PrintWriter salida;
@@ -83,15 +79,12 @@ public class ChatController {
         chatbox.toFront();
     }
 
-    public void setUsers(interfazCliente cliente, interfazCliente destino) throws Exception{
-        this.cliente = cliente;
+    public void setUsers(Socket socket, String destino) throws Exception{
         this.destino = destino;
-        usuarioLabel.setText(destino.getNombre());
+        usuarioLabel.setText(destino);
 
-        //Configuramos el socket para el envio de mensajes
-        IPdestino = destino.getIP();
         try{
-            socket = new Socket(IPdestino,puerto);
+            this.socket = socket;
             salida = new PrintWriter(socket.getOutputStream(), true);
             hilo = new ChatThread("Receptor",socket,this);
             hilo.start();

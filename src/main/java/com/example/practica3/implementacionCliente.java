@@ -38,6 +38,10 @@ public class implementacionCliente extends UnicastRemoteObject implements interf
         controller.notiPrincipal.appendText(nombre + " se ha conectado.\n");
     }
 
+    public void recibirConexion(interfazCliente origen) throws Exception{
+        controller.recibirConexion(origen);
+    }
+
     public void notificarSalida(String nombre) {
         controller.notiPrincipal.appendText(nombre + " se ha desconectado.\n");
     }

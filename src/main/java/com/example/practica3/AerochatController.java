@@ -16,11 +16,11 @@ import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
 import java.net.InetAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.rmi.*;
 
 import java.rmi.Naming;
-import java.rmi.server.RemoteServer;
-import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 
 public class AerochatController {
@@ -35,6 +35,10 @@ public class AerochatController {
     private AnchorPane panelConectados;
     @FXML
     private AnchorPane panelContrasena;
+    @FXML
+    private AnchorPane panelConexionOrigen;
+    @FXML
+    private AnchorPane panelConexionDestino;
     @FXML
     private VBox vboxConectados;
     @FXML
@@ -73,13 +77,23 @@ public class AerochatController {
     private Label loginWarning;
     @FXML
     private Label contrasenaWarning;
+    @FXML
+    private Label connectingUserOrigen;
+    @FXML
+    private Label connectingUserDestino;
+    @FXML
+    private Button rechazarConexionOrigen;
+    @FXML
+    private Button rechazarConexionDestino;
+    @FXML
+    private Button aceptarConexionDestino;
 
     private ArrayList<String> conected;
     private ArrayList<interfazCliente> friendList;
 
     private interfazCliente cliente;
     private interfazServidor servidor;
-    private interfazCliente actualUser;
+    private String selectedUser;
 
     private Image backgroundImageLogin;
     private BackgroundImage backgroundLogin;
@@ -128,6 +142,12 @@ public class AerochatController {
 
         panelContrasena.setBackground(null);
         panelContrasena.setBackground(new Background(backgroundLogin));
+
+        panelConexionOrigen.setBackground(null);
+        panelConexionOrigen.setBackground(new Background(backgroundLogin));
+
+        panelConexionDestino.setBackground(null);
+        panelConexionDestino.setBackground(new Background(backgroundLogin));
 
         botonesPrincipal = new ArrayList<>();
         botonesPrincipal.add(abrirUsuariosBoton);
@@ -297,7 +317,7 @@ public class AerochatController {
         try {
             conected = servidor.obtenerClientesActuales();
             for (var usuario : conected) {
-                if(!usuario.equals(cliente.getNombre())){
+                if(usuario.equals(cliente.getNombre())){
                     Button button = new Button(usuario);
                     button.setPrefWidth(panelConectados.getWidth());
                     button.setOnAction(event -> {
@@ -312,6 +332,12 @@ public class AerochatController {
     }
 
     private void crearFondoNegro(int panelID){
+
+        if(fondoNegro != null){
+            panel.getChildren().remove(fondoNegro);
+            fondoNegro = null;
+        }
+
         fondoNegro = new ImageView();
         fondoNegro.setImage(new Image(getClass().getResource("fondoNegro.jpg").toExternalForm()));
         fondoNegro.setFitWidth(10000);
@@ -327,6 +353,7 @@ public class AerochatController {
 
         switch (panelID){
             default:
+                return;
             case 0:
                 panelConectados.setDisable(true);
                 panelConectados.setOpacity(0);
@@ -334,6 +361,14 @@ public class AerochatController {
             case 1:
                 panelContrasena.setDisable(true);
                 panelContrasena.setOpacity(0);
+                break;
+            case 2:
+                panelConexionOrigen.setDisable(true);
+                panelConexionOrigen.setOpacity(0);
+                break;
+            case 3:
+                panelConexionDestino.setDisable(true);
+                panelConexionDestino.setOpacity(0);
                 break;
         }
         conectarBoton.setDisable(true);
@@ -361,39 +396,86 @@ public class AerochatController {
     }
 
     @FXML
+    protected void onUserClick(String nombre){
+
+        try{
+            selectedUser = nombre;
+            conectarBoton.setDisable(false);
+
+        } catch (Exception e) {
+            warningText.setText("Error recuperando usuario");
+            throw new RuntimeException(e);
+        }
+    }
+
+    @FXML
+    protected void intentarConexion(){
+
+        try{
+            panelConectados.setDisable(true);
+            panelConectados.setOpacity(0.0);
+            crearFondoNegro(-1);
+
+            panelConexionOrigen.setDisable(false);
+            panelConexionOrigen.setOpacity(1.0);
+            connectingUserOrigen.setText(selectedUser);
+            panelConexionOrigen.toFront();
+
+            ServerSocket serverSocket = new ServerSocket(1100);
+
+            servidor.conectarClientes(cliente,selectedUser);
+            rechazarConexionOrigen.setOnAction(event -> {onTouchFondoNegro(2);});
+
+            //Socket socket = serverSocket.accept();
+
+        } catch (Exception e) {
+            warningText.setText("Error conectando usuario");
+            throw new RuntimeException(e);
+        }
+    }
+
+    @FXML
+    protected void recibirConexion(interfazCliente origen){
+
+        try{
+            panelConectados.setDisable(true);
+            panelConectados.setOpacity(0.0);
+            panelContrasena.setDisable(true);
+            panelContrasena.setOpacity(0.0);
+
+            crearFondoNegro(-1);
+
+            panelConexionDestino.setDisable(false);
+            panelConexionDestino.setOpacity(1.0);
+            panelConexionDestino.toFront();
+            connectingUserDestino.setText(origen.getNombre());
+
+            rechazarConexionDestino.setOnAction(event -> {onTouchFondoNegro(3);});
+            //aceptarConexionDestino.setOnAction();
+
+        } catch (Exception e) {
+            warningText.setText("Error conectando usuario");
+            throw new RuntimeException(e);
+        }
+    }
+
+    @FXML
     protected void onAbrirChat() throws Exception{
 
-        System.out.println("Nombre: " + actualUser.getNombre());
         try{
             FXMLLoader loader = new FXMLLoader(getClass().getResource("AerochatChat.fxml"));
             Scene scene = new Scene(loader.load(), 720, 440);
 
             Stage chat = new Stage();
-            chat.setTitle(actualUser.getNombre() + " | Chat");
+            chat.setTitle(selectedUser + " | Chat");
             chat.setScene(scene);
             chat.show();
             ChatController controller = loader.getController();
 
-
-            cliente.anadirChat(actualUser.getNombre(),controller);
-            controller.setUsers(cliente, actualUser);
+            cliente.anadirChat(selectedUser,controller);
+            //controller.setUsers(socket, selectedUser);
         } catch (Exception e) {
             throw new Exception(e);
-        }
-
-    }
-
-    @FXML
-    protected void onUserClick(String nombre){
-        System.out.println(nombre);
-
-        try{
-            actualUser = servidor.getCliente(nombre);
-            conectarBoton.setDisable(false);
-            System.out.println(actualUser.getNombre() + actualUser.getIP());
-        } catch (Exception e) {
-            warningText.setText("Error recuperando usuario");
-            throw new RuntimeException(e);
         }
     }
 

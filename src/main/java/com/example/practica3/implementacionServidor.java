@@ -182,6 +182,15 @@ public class implementacionServidor extends UnicastRemoteObject
             throw new RuntimeException(e);
         }
     }
+
+    public void conectarClientes(interfazCliente origen, String destino) throws Exception{
+        interfazCliente clienteDestino = getCliente(destino);
+        clienteDestino.recibirConexion(origen);
+    }
+
+    public void conectarClientesAceptar(){
+        
+    }
 	
 	private byte[] hashear(String contrasinal, byte[] salt) throws NoSuchAlgorithmException{
 		MessageDigest md = MessageDigest.getInstance("SHA-512");
