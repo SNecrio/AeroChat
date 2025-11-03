@@ -215,12 +215,11 @@ public class AerochatController {
                 // Asignamoslle un porto  REVISAR
                 ServerSocket serverSocket = new ServerSocket(0);
                 int porto = serverSocket.getLocalPort();
-                System.out.println(porto);
                 // Creamos o cliente
                 cliente = new implementacionCliente(username, IP, porto,this);
 
                 // Rexistramos o cliente no servidor
-                servidor.registrarCliente(username, cliente);
+                servidor.registrarCliente(username, cliente, IP);
                 conected = servidor.obtenerClientesActuales();
                 cliente.actualizarConectados(conected);
 

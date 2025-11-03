@@ -10,17 +10,20 @@ import java.nio.charset.StandardCharsets;
 public class implementacionServidor extends UnicastRemoteObject
     implements interfazServidor {
 	private HashMap<String, interfazCliente> clientes;
+    private HashMap<String, String> ipsClientes;
 	private static String arquivoUsuarios = "usuarios.txt";
     //private static String arquivoSolicitudes = "solicitudes.txt";
   
 	public implementacionServidor() throws RemoteException {
       super( );
 	  clientes = new HashMap<>();
+      ipsClientes = new HashMap<>();
 	}
    
-    public void registrarCliente(String nome, interfazCliente clienteNuevo) throws Exception{
+    public void registrarCliente(String nome, interfazCliente clienteNuevo, String ip) throws Exception{
 		//Metemos ao novo cliente no hashmap
         clientes.put(nome, clienteNuevo);
+        ipsClientes.put(nome, ip);
 		
 		//Notificamos aos demais da nova conexion
 		for(Map.Entry<String,interfazCliente> entrada : clientes.entrySet()){
@@ -28,7 +31,7 @@ public class implementacionServidor extends UnicastRemoteObject
 			interfazCliente interOutro = entrada.getValue();
 			if(!outro.equals(nome)){
 				try{
-					interOutro.notificarLlegada(nome);
+					//interOutro.notificarLlegada(nome);
 				} catch (Exception e) {
 					System.out.println("Erro rexistrando cliente: " + e);
 				}
@@ -45,7 +48,7 @@ public class implementacionServidor extends UnicastRemoteObject
 		//Notificamos aos demais da desconexion
 		for(interfazCliente interfaz : clientes.values()){
 			try{
-				interfaz.notificarSalida(nome);
+				//interfaz.notificarSalida(nome);
 			} catch (Exception e) {
 				System.out.println("Erro eliminando cliente: " + e);
 			}
@@ -185,9 +188,7 @@ public class implementacionServidor extends UnicastRemoteObject
 
     public String IPsolicitada(String nome) throws RemoteException{
         try {
-            interfazCliente i = clientes.get(nome);
-            String ip = i.getIP();
-            return ip;
+            return ipsClientes.get(nome);
         } catch (Exception e){
             System.err.println("Error: " + e);
         }
