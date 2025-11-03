@@ -183,6 +183,26 @@ public class implementacionServidor extends UnicastRemoteObject
         }
     }
 
+    public String IPsolicitada(String nome) throws RemoteException{
+        try {
+            interfazCliente i = clientes.get(nome);
+            return i.getIP();
+        } catch (Exception e){
+            System.err.println("Error: " + e);
+        }
+        return null;
+    }
+
+    public int portoSolicitado(String nome) throws RemoteException {
+        try {
+            interfazCliente i = clientes.get(nome);
+            return i.getPorto();
+        } catch (Exception e) {
+        System.out.println("Error: " + e);
+        }
+        return 0;
+    }
+/*
     public void conectarClientes(interfazCliente origen, String destino) throws Exception{
         interfazCliente clienteDestino = getCliente(destino);
         clienteDestino.recibirConexion(origen);
@@ -190,7 +210,7 @@ public class implementacionServidor extends UnicastRemoteObject
 
     public void conectarClientesAceptar(){
         
-    }
+    }*/
 	
 	private byte[] hashear(String contrasinal, byte[] salt) throws NoSuchAlgorithmException{
 		MessageDigest md = MessageDigest.getInstance("SHA-512");

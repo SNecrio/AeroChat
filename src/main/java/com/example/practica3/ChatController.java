@@ -44,7 +44,7 @@ public class ChatController {
 
         messageArea.setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.ENTER) {
-                enviarMensaje();
+                //enviarMensaje();
             }
         });
 
@@ -103,6 +103,7 @@ public class ChatController {
         });
     }
 
+
     @FXML
     protected void enviarMensaje(){
 
@@ -111,14 +112,15 @@ public class ChatController {
             return;
         }
         try{
-            Label usuario = new Label(LocalTime.now().getHour() + ":" + LocalTime.now().getMinute() + "| " + cliente.getNombre());
+            //Label usuario = new Label(LocalTime.now().getHour() + ":" + LocalTime.now().getMinute() + "| " + cliente.getNombre());
+            Label usuario = new Label(LocalTime.now().getHour() + ":" + LocalTime.now().getMinute() + "| ");
             Label mensaje = new Label(mensajeEnviar);
             chatbox.getChildren().add(usuario);
             chatbox.getChildren().add(mensaje);
 
             salida.println(mensajeEnviar);
 
-        } catch (RemoteException e) {
+        } catch (Exception e) {
             System.err.println("Error en el mandado de mensaje");
             throw new RuntimeException(e);
         }
@@ -133,13 +135,15 @@ public class ChatController {
     protected void recibirMensaje(String mensajeRecibido) throws Exception{
 
         if(mensajeRecibido.equalsIgnoreCase("USR DESCONECTADO")){
-            Label mensaje = new Label(destino.getNombre() + " se ha desconectado");
+            //Label mensaje = new Label(destino.getNombre() + " se ha desconectado");
+            Label mensaje = new Label("Usuario desconectado");
             mensaje.setStyle("-fx-text-fill: #cf0000;"); //Rojo
             chatbox.getChildren().add(mensaje);
             return;
         }
 
-        Label usuario = new Label(LocalTime.now().getHour() + ":" + LocalTime.now().getMinute() + "| " + destino.getNombre());
+        //Label usuario = new Label(LocalTime.now().getHour() + ":" + LocalTime.now().getMinute() + "| " + destino.getNombre());
+        Label usuario = new Label(LocalTime.now().getHour() + ":" + LocalTime.now().getMinute() + "| ");
         Label mensaje = new Label(mensajeRecibido);
 
         chatbox.getChildren().add(usuario);

@@ -2,24 +2,27 @@ package com.example.practica3;
 
 import javafx.application.Platform;
 
+import java.net.ServerSocket;
 import java.rmi.server.*;
 import java.rmi.*;
 import java.util.ArrayList;
 import java.util.Dictionary;
-import java.util.Enumeration;
+import java.net.*;
 import java.util.Hashtable;
 
 public class implementacionCliente extends UnicastRemoteObject implements interfazCliente {
 
     private String name;
     private String IP;
+    private int porto;
     private AerochatController controller;
     private Dictionary<String, ChatController> chatsAbiertos;
 
-    public implementacionCliente(String eName, String eIP, AerochatController controller) throws RemoteException {
+    public implementacionCliente(String eName, String eIP, int porto, AerochatController controller) throws RemoteException {
         super();
         this.name = eName;
         this.IP = eIP;
+        this.porto = porto;
         this.controller = controller;
         chatsAbiertos = new Hashtable<>();
     }
@@ -32,15 +35,17 @@ public class implementacionCliente extends UnicastRemoteObject implements interf
         return IP;
     }
 
+    public int getPorto(){return porto;}
+
     public void anadirChat(String nombre, ChatController chat){ chatsAbiertos.put(nombre, chat); }
 
     public void notificarLlegada(String nombre) {
         controller.notiPrincipal.appendText(nombre + " se ha conectado.\n");
     }
-
+/*
     public void recibirConexion(interfazCliente origen) throws Exception{
         controller.recibirConexion(origen);
-    }
+    }*/
 
     public void notificarSalida(String nombre) {
         controller.notiPrincipal.appendText(nombre + " se ha desconectado.\n");
@@ -53,6 +58,10 @@ public class implementacionCliente extends UnicastRemoteObject implements interf
 		}
     }
 /*
+    public void confirmarConexion(interfazCliente destino) throws RemoteException {
+        controller.abrirChatConfirmado(destino);
+    }
+
     public void recibirMensaje(String emisor, String mensaje) {
         System.out.println(emisor + ": " + mensaje);
     }

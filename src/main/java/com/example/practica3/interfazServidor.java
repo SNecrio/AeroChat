@@ -24,9 +24,14 @@ public interface interfazServidor extends Remote {
 		throws java.rmi.RemoteException;
 
     public interfazCliente getCliente(String nome) throws Exception;
-
+/*
     public void conectarClientes(interfazCliente origen, String destino) throws Exception;
-
+*/
     public boolean cambiarContrasinal(String nome, String contrasinal, String novo)
-            throws java.rmi.RemoteException;;
+            throws java.rmi.RemoteException;
+
+    public String IPsolicitada(String nome)
+            throws RemoteException;
+
+    public int portoSolicitado(String nome) throws RemoteException;
 }

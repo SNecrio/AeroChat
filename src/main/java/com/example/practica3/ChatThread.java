@@ -12,7 +12,6 @@ public class ChatThread extends Thread{
     private ChatController controller;
 
     public ChatThread(String name, Socket socket, ChatController controller) throws IOException {
-
         super(name);
         this.socket = socket;
         entrada = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -21,7 +20,7 @@ public class ChatThread extends Thread{
 
     public void run(){
 
-        while(true){
+       while(true){
             try {
                 String respuesta = entrada.readLine();
                 controller.recibirMensaje(respuesta);

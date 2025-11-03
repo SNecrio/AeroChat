@@ -15,6 +15,7 @@ import javafx.scene.layout.BackgroundSize;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
+import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -99,6 +100,8 @@ public class AerochatController {
     private BackgroundImage backgroundLogin;
 
     private ArrayList<Button> botonesPrincipal;
+
+    private ChatController chatController;
 
     @FXML
     public void initialize() throws Exception{
@@ -205,13 +208,23 @@ public class AerochatController {
         //Se conecto al servidor bien
         if(loginSuccess){
             try{
+                // Tomamos a IP do cliente
                 InetAddress localHost = InetAddress.getLocalHost();
                 String IP = localHost.getHostAddress();
-                cliente = new implementacionCliente(username,IP,this);
+                // Asignamoslle un porto  REVISAR
+                ServerSocket serverSocket = new ServerSocket(0);
+                int porto = serverSocket.getLocalPort();
+                // Creamos o cliente
+                cliente = new implementacionCliente(username, IP, porto,this);
 
+                // Rexistramos o cliente no servidor
                 servidor.registrarCliente(username, cliente);
                 conected = servidor.obtenerClientesActuales();
                 cliente.actualizarConectados(conected);
+
+                // Arrancamos xa o fio destinado a escoitar peticions doutros clientes
+                EscuchaThread escoita = new EscuchaThread(username,serverSocket,chatController);
+                escoita.start();
 
                 Stage stage = (Stage) panel.getScene().getWindow();
                 stage.setOnCloseRequest(event -> {
@@ -317,7 +330,7 @@ public class AerochatController {
         try {
             conected = servidor.obtenerClientesActuales();
             for (var usuario : conected) {
-                if(usuario.equals(cliente.getNombre())){
+                if(!usuario.equals(cliente.getNombre())){
                     Button button = new Button(usuario);
                     button.setPrefWidth(panelConectados.getWidth());
                     button.setOnAction(event -> {
@@ -408,6 +421,10 @@ public class AerochatController {
         }
     }
 
+
+
+
+
     @FXML
     protected void intentarConexion(){
 
@@ -421,12 +438,19 @@ public class AerochatController {
             connectingUserOrigen.setText(selectedUser);
             panelConexionOrigen.toFront();
 
-            ServerSocket serverSocket = new ServerSocket(1100);
+            rechazarConexionOrigen.setOnAction(event -> { onTouchFondoNegro(2); });
 
-            servidor.conectarClientes(cliente,selectedUser);
-            rechazarConexionOrigen.setOnAction(event -> {onTouchFondoNegro(2);});
+            // Enviamoslle ao cliente seleccionado a solicitude de conexion
+            String ipDestino = servidor.IPsolicitada(selectedUser);
+            int portoDestino = servidor.portoSolicitado(selectedUser);
 
-            //Socket socket = serverSocket.accept();
+            Socket socket = new Socket(ipDestino, portoDestino);
+            OutputStream out = socket.getOutputStream();
+
+            // Enviamos una solicitud simple
+            String mensaje = "SOL";
+            out.write(mensaje.getBytes());
+            out.flush();
 
         } catch (Exception e) {
             warningText.setText("Error conectando usuario");
@@ -436,7 +460,7 @@ public class AerochatController {
 
     @FXML
     protected void recibirConexion(interfazCliente origen){
-
+/*
         try{
             panelConectados.setDisable(true);
             panelConectados.setOpacity(0.0);
@@ -451,17 +475,37 @@ public class AerochatController {
             connectingUserDestino.setText(origen.getNombre());
 
             rechazarConexionDestino.setOnAction(event -> {onTouchFondoNegro(3);});
-            //aceptarConexionDestino.setOnAction();
+            aceptarConexionDestino.setOnAction(event -> {
+                try{
+                    selectedUser = origen.getNombre();
+                    onAbrirChat();
+                    origen.confirmarConexion(cliente);
+                    onTouchFondoNegro(3);
+                } catch (Exception e) {
+                    System.err.println("Error aceptando conexion: " + e);
+                }
+            });
 
         } catch (Exception e) {
             warningText.setText("Error conectando usuario");
             throw new RuntimeException(e);
+        }*/
+    }
+ /*
+    public void abrirChatConfirmado(interfazCliente destino) {
+
+        try {
+            selectedUser = destino.getNombre();
+            onAbrirChat();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
+    */
 
     @FXML
     protected void onAbrirChat() throws Exception{
-
+    /*
         try{
             FXMLLoader loader = new FXMLLoader(getClass().getResource("AerochatChat.fxml"));
             Scene scene = new Scene(loader.load(), 720, 440);
@@ -470,13 +514,37 @@ public class AerochatController {
             chat.setTitle(selectedUser + " | Chat");
             chat.setScene(scene);
             chat.show();
-            ChatController controller = loader.getController();
+            chatController = loader.getController();
 
-            cliente.anadirChat(selectedUser,controller);
-            //controller.setUsers(socket, selectedUser);
+            cliente.anadirChat(selectedUser,chatController);
+
+
+            //ServerSocket serverSocket = new ServerSocket(1100);
+
+            //servidor.conectarClientes(cliente,selectedUser);
+
+            // Iniciamos un fio encargado de escoitar mensaxes
+            EscuchaThread recepcion = new EscuchaThread(cliente.getNombre(), cliente.getSocket(), chatController);
+            recepcion.start();
+
+            // Iniciamos un socket temporal de envio
+            try {
+                Socket socket = new Socket();
+                // Iniciamos o fio encargado de enviar mensaxes
+                ChatThread envio = new ChatThread(cliente.getNombre(), socket, chatController);
+                envio.start();
+            } catch (Exception e) {
+                System.err.println("Error: " + e);
+            }
+
+            rechazarConexionOrigen.setOnAction(event -> {onTouchFondoNegro(2);});
+
+            //Socket socket = serverSocket.accept();
+
+
         } catch (Exception e) {
             throw new Exception(e);
-        }
+        }*/
     }
 
     @FXML
