@@ -219,7 +219,7 @@ public class AerochatController {
                 cliente = new implementacionCliente(username, IP, porto,this);
 
                 // Rexistramos o cliente no servidor
-                servidor.registrarCliente(username, cliente, IP);
+                servidor.registrarCliente(username, cliente, IP,porto);
                 conected = servidor.obtenerClientesActuales();
                 cliente.actualizarConectados(conected);
 

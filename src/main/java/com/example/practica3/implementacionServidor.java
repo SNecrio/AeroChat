@@ -11,6 +11,7 @@ public class implementacionServidor extends UnicastRemoteObject
     implements interfazServidor {
 	private HashMap<String, interfazCliente> clientes;
     private HashMap<String, String> ipsClientes;
+    private HashMap<String, Integer> portosClientes;
 	private static String arquivoUsuarios = "usuarios.txt";
     //private static String arquivoSolicitudes = "solicitudes.txt";
   
@@ -18,12 +19,14 @@ public class implementacionServidor extends UnicastRemoteObject
       super( );
 	  clientes = new HashMap<>();
       ipsClientes = new HashMap<>();
+      portosClientes = new HashMap<>();
 	}
    
-    public void registrarCliente(String nome, interfazCliente clienteNuevo, String ip) throws Exception{
+    public void registrarCliente(String nome, interfazCliente clienteNuevo, String ip, int porto) throws Exception{
 		//Metemos ao novo cliente no hashmap
         clientes.put(nome, clienteNuevo);
         ipsClientes.put(nome, ip);
+        portosClientes.put(nome, porto);
 		
 		//Notificamos aos demais da nova conexion
 		for(Map.Entry<String,interfazCliente> entrada : clientes.entrySet()){
@@ -197,8 +200,7 @@ public class implementacionServidor extends UnicastRemoteObject
 
     public int portoSolicitado(String nome) throws RemoteException {
         try {
-            interfazCliente i = clientes.get(nome);
-            return i.getPorto();
+            return portosClientes.get(nome);
         } catch (Exception e) {
         System.out.println("Error: " + e);
         }
