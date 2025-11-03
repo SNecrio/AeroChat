@@ -40,6 +40,7 @@ public class implementacionServidor extends UnicastRemoteObject
 				}
 			}	
 		}
+        System.out.println("[Servidor] Cliente registrado: " + nome + " IP=" + ip + " puerto=" + porto);
 		Set<String> actuais = clientes.keySet();
 		ArrayList<String> conectados = new ArrayList<>(actuais);
 	}

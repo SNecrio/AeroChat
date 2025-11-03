@@ -444,6 +444,7 @@ public class AerochatController {
             // Enviamoslle ao cliente seleccionado a solicitude de conexion
             String ipDestino = servidor.IPsolicitada(selectedUser);
             int portoDestino = servidor.portoSolicitado(selectedUser);
+            System.out.println("Intentando conectar con " + ipDestino + ":" + portoDestino);
 
             Socket socket = new Socket(ipDestino, portoDestino);
             OutputStream out = socket.getOutputStream();

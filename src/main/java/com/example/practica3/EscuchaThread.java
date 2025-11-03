@@ -18,10 +18,10 @@ public class EscuchaThread extends Thread{
     }
 
     public void run() {
-        System.out.println("Fio escoitando en: " + serverSocket.getLocalPort()); //Debug, podese borrar
         while (true) {
             try {
                 // Esperamos conexions
+                System.out.println("Esperando conexiones en puerto " + serverSocket.getLocalPort());
                 Socket socket = serverSocket.accept();
                 // Lemos a mensaxe
                 BufferedReader b = new BufferedReader(new InputStreamReader(socket.getInputStream()));
