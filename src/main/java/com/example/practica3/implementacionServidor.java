@@ -30,7 +30,7 @@ public class implementacionServidor extends UnicastRemoteObject
 				try{
 					interOutro.notificarLlegada(nome);
 				} catch (Exception e) {
-					System.out.println("Erro: " + e);
+					System.out.println("Erro rexistrando cliente: " + e);
 				}
 			}	
 		}
@@ -47,7 +47,7 @@ public class implementacionServidor extends UnicastRemoteObject
 			try{
 				interfaz.notificarSalida(nome);
 			} catch (Exception e) {
-				System.out.println("Erro: " + e);
+				System.out.println("Erro eliminando cliente: " + e);
 			}
 		}
 	}
@@ -84,7 +84,7 @@ public class implementacionServidor extends UnicastRemoteObject
                 return true;
             }
 		}catch(Exception e){
-			System.out.println("Erro: " + e);
+			System.out.println("Erro en novo usuario: " + e);
 		}
 		return false;
 	}
@@ -106,7 +106,7 @@ public class implementacionServidor extends UnicastRemoteObject
 				}	
 			}
 		}catch(Exception e){
-			System.out.println("Erro: " + e);
+			System.out.println("Erro en acceder usuario: " + e);
 		}
 		return false;
 	}
@@ -186,7 +186,8 @@ public class implementacionServidor extends UnicastRemoteObject
     public String IPsolicitada(String nome) throws RemoteException{
         try {
             interfazCliente i = clientes.get(nome);
-            return i.getIP();
+            String ip = i.getIP();
+            return ip;
         } catch (Exception e){
             System.err.println("Error: " + e);
         }

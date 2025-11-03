@@ -211,9 +211,11 @@ public class AerochatController {
                 // Tomamos a IP do cliente
                 InetAddress localHost = InetAddress.getLocalHost();
                 String IP = localHost.getHostAddress();
+                System.out.println(IP);
                 // Asignamoslle un porto  REVISAR
                 ServerSocket serverSocket = new ServerSocket(0);
                 int porto = serverSocket.getLocalPort();
+                System.out.println(porto);
                 // Creamos o cliente
                 cliente = new implementacionCliente(username, IP, porto,this);
 

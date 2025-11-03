@@ -40,7 +40,8 @@ public class implementacionCliente extends UnicastRemoteObject implements interf
     public void anadirChat(String nombre, ChatController chat){ chatsAbiertos.put(nombre, chat); }
 
     public void notificarLlegada(String nombre) {
-        controller.notiPrincipal.appendText(nombre + " se ha conectado.\n");
+        System.out.println("Llegando chat: " + nombre);
+        //controller.notiPrincipal.appendText(nombre + " se ha conectado.\n");
     }
 /*
     public void recibirConexion(interfazCliente origen) throws Exception{
@@ -48,7 +49,8 @@ public class implementacionCliente extends UnicastRemoteObject implements interf
     }*/
 
     public void notificarSalida(String nombre) {
-        controller.notiPrincipal.appendText(nombre + " se ha desconectado.\n");
+        System.out.println("Saliendo chat: " + nombre);
+        //controller.notiPrincipal.appendText(nombre + " se ha desconectado.\n");
     }
 
     public void actualizarConectados(ArrayList<String> nombres) {
