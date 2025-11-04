@@ -67,7 +67,7 @@ public class implementacionCliente extends UnicastRemoteObject implements interf
                 String[] partes = cadea.split("\\:");
 
                 if(partes[0].equals(nome)){
-                   String[] partes2 = partes[1].split("\\ ");
+                   String[] partes2 = partes[1].split("\\|");
                     amigos.addAll(Arrays.asList(partes2));
                     break;
                 }

@@ -49,7 +49,7 @@
                </content>
             </ScrollPane>
             <Button fx:id="conectarBoton" disable="true" layoutX="6.0" layoutY="295.0" mnemonicParsing="false" onAction="#intentarConexion" prefHeight="26.0" prefWidth="92.0" text="Conectarse" />
-            <Button fx:id="conectarBoton1" disable="true" layoutX="107.0" layoutY="295.0" mnemonicParsing="false" onAction="#onAbrirChat" prefHeight="26.0" prefWidth="92.0" text="Añadir amigo" />
+            <Button fx:id="conectarBoton1" disable="true" layoutX="107.0" layoutY="295.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="92.0" text="Añadir amigo" />
             <Button layoutX="236.0" layoutY="295.0" mnemonicParsing="false" onAction="#botonesConectados" prefHeight="26.0" prefWidth="26.0" text="↺" />
          </children>
       </AnchorPane>
@@ -146,7 +146,7 @@
       </AnchorPane>
       <ScrollPane layoutX="526.0" layoutY="102.0" prefHeight="308.0" prefWidth="178.0" AnchorPane.bottomAnchor="12.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="102.0">
          <content>
-            <VBox prefHeight="300.0" prefWidth="172.0" />
+            <VBox fx:id="vboxAmigos" prefHeight="300.0" prefWidth="172.0" />
          </content>
       </ScrollPane>
       <TextField fx:id="friendText" disable="true" layoutX="526.0" layoutY="44.0" prefHeight="26.0" prefWidth="178.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="44.0" />

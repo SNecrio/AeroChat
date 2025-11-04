@@ -583,7 +583,7 @@ public class AerochatController {
 
         String nombre = friendText.getText();
 
-        if(nombre.isBlank() || nombre.contains("|")){
+        if(nombre.isBlank() || nombre.contains("|") || nombre.contains(":")){
             warningText.setText("Introduzca un nombre valido");
             return;
         }
