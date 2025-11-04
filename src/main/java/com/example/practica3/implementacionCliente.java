@@ -2,13 +2,13 @@ package com.example.practica3;
 
 import javafx.application.Platform;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.net.ServerSocket;
 import java.rmi.server.*;
 import java.rmi.*;
-import java.util.ArrayList;
-import java.util.Dictionary;
+import java.util.*;
 import java.net.*;
-import java.util.Hashtable;
 
 public class implementacionCliente extends UnicastRemoteObject implements interfazCliente {
 
@@ -16,6 +16,7 @@ public class implementacionCliente extends UnicastRemoteObject implements interf
     private String IP;
     private AerochatController controller;
     private Dictionary<String, ChatController> chatsAbiertos;
+    private static String arquivoAmigos = "amigos.txt";
 
     public implementacionCliente(String eName, String eIP, AerochatController controller) throws RemoteException {
         super();
@@ -55,6 +56,28 @@ public class implementacionCliente extends UnicastRemoteObject implements interf
 			System.out.println(" · " + n);
 		}
     }
+
+    public ArrayList<String> listarAmigos(String nome) throws java.rmi.RemoteException{
+        ArrayList<String> amigos = new ArrayList<>();
+        try(FileReader f = new FileReader(arquivoAmigos)){
+            BufferedReader b = new BufferedReader(f);
+            String cadea;
+
+            while((cadea = b.readLine())!=null){
+                String[] partes = cadea.split("\\:");
+
+                if(partes[0].equals(nome)){
+                   String[] partes2 = partes[1].split("\\ ");
+                    amigos.addAll(Arrays.asList(partes2));
+                    break;
+                }
+            }
+        }catch(Exception e){
+            System.out.println("Erro atopando amigos: " + e);
+        }
+        return amigos;
+    }
+
 /*
     public void confirmarConexion(interfazCliente destino) throws RemoteException {
         controller.abrirChatConfirmado(destino);

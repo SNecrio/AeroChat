@@ -258,8 +258,11 @@ public class AerochatController {
             loginPane.setOpacity(0);
             panel.getChildren().remove(fondoNegro);
             fondoNegro = null;
-
-            ponerAmigos();
+            try {
+                ponerAmigos(cliente.listarAmigos(username));
+            }catch (Exception e){
+                System.out.println("Erro: " + e);
+            }
         }else{
             loginWarning.setText("Contraseña no coincidente con ese usuario");
         }
@@ -559,17 +562,16 @@ public class AerochatController {
         }*/
     }
 
-    @FXML
-    private void ponerAmigos(){
+    private void ponerAmigos(ArrayList<String> amigos){
 
         try{
-            for(var amigo : friendList){
+            for(String amigo : amigos){
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("FriendUser.fxml"));
-                FriendController controlador = loader.getController();
                 AnchorPane panelAmigo = loader.load();
+                FriendController controlador = loader.getController();
 
                 boolean conectado = false;
-                if(conected.contains(amigo.getNombre())){
+                if(conected.contains(amigo)){
                     conectado = true;
                 }
                 controlador.setUser(amigo,conectado);

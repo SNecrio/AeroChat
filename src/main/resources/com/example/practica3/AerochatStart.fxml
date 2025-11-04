@@ -155,7 +155,7 @@
             <Cursor fx:constant="HAND" />
          </cursor>
       </Button>
-      <Button fx:id="recargaAmigos" disable="true" layoutX="525.0" layoutY="18.0" mnemonicParsing="false" onAction="#ponerAmigos" prefHeight="26.0" prefWidth="26.0" text="↺" AnchorPane.rightAnchor="167.0" AnchorPane.topAnchor="18.0" />
+      <Button fx:id="recargaAmigos" disable="true" layoutX="525.0" layoutY="18.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="26.0" text="↺" AnchorPane.rightAnchor="167.0" AnchorPane.topAnchor="18.0" />
       <Button fx:id="conectarAmigoBoton" disable="true" layoutX="527.0" layoutY="76.0" mnemonicParsing="false" onAction="#onGenteConectada" prefHeight="25.0" prefWidth="86.0" text="Conectar" AnchorPane.rightAnchor="105.0" AnchorPane.topAnchor="76.0">
          <cursor>
             <Cursor fx:constant="HAND" />

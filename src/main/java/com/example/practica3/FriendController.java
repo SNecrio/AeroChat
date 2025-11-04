@@ -23,8 +23,8 @@ public class FriendController {
 
     private interfazCliente amigo;
 
-    public void setUser(interfazCliente amigo, boolean conectado) throws Exception{
-        nombreBoton.setLabel(amigo.getNombre());
+    public void setUser(String amigo, boolean conectado) throws Exception{
+        //nombreBoton.setLabel(amigo);
         if(conectado){
             conectadoLabel.setText("৹ Conectado");
             conectadoLabel.setStyle("-fx-text-fill: #03d000;"); //Verde
