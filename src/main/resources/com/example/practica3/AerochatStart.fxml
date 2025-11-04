@@ -125,8 +125,8 @@
                   <Font size="14.0" />
                </font>
             </Label>
-            <Button fx:id="aceptarConexionDestino" layoutX="181.0" layoutY="101.0" mnemonicParsing="false" text="Aceptar" AnchorPane.bottomAnchor="23.0" AnchorPane.rightAnchor="28.0" />
-            <Button fx:id="rechazarConexionDestino" layoutX="32.0" layoutY="101.0" mnemonicParsing="false" text="Rechazar" />
+            <Button fx:id="aceptarConexionDestinoBoton" layoutX="181.0" layoutY="101.0" mnemonicParsing="false" text="Aceptar" AnchorPane.bottomAnchor="23.0" AnchorPane.rightAnchor="28.0" />
+            <Button fx:id="rechazarConexionDestinoBoton" layoutX="32.0" layoutY="101.0" mnemonicParsing="false" text="Rechazar" />
          </children>
       </AnchorPane>
       <AnchorPane fx:id="panelConexionOrigen" disable="true" layoutX="220.0" layoutY="109.0" opacity="0.0" prefHeight="150.0" prefWidth="135.0">

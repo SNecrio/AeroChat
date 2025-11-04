@@ -27,10 +27,11 @@ public interface interfazCliente extends Remote {
     public void anadirChat(String nombre, ChatController chat)
             throws java.rmi.RemoteException;
 
-    public void recibirConexion(interfazCliente origen)
-        throws Exception;
+
 
     void confirmarConexion(interfazCliente destino)
             throws RemoteException;
 */
+
+    public void recibirIntentoConexion(interfazCliente origen, int puerto) throws Exception;
 }

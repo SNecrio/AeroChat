@@ -38,4 +38,6 @@ public interface interfazServidor extends Remote {
 
     public void asignarPorto(String nome, int porto)
             throws RemoteException;
+
+    public void intentarConexion(interfazCliente origen, String destino) throws Exception;
 }

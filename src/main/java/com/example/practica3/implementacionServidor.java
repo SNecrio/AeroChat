@@ -224,5 +224,11 @@ public class implementacionServidor extends UnicastRemoteObject
     public void asignarPorto(String nome, int porto) throws RemoteException{
         portosClientes.put(nome, porto);
     }
-	
+
+    public void intentarConexion(interfazCliente origen, String destino) throws Exception {
+        interfazCliente clienteDestino = getCliente(destino);
+
+        clienteDestino.recibirIntentoConexion(origen, portoSolicitado(origen.getNombre()));
+    }
+
 }

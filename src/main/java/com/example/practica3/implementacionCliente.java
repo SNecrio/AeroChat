@@ -40,10 +40,10 @@ public class implementacionCliente extends UnicastRemoteObject implements interf
         System.out.println("Llegando chat: " + nombre);
         //controller.notiPrincipal.appendText(nombre + " se ha conectado.\n");
     }
-/*
-    public void recibirConexion(interfazCliente origen) throws Exception{
-        controller.recibirConexion(origen);
-    }*/
+
+    public void recibirIntentoConexion(interfazCliente origen, int puerto){
+        controller.recibirConexion(origen, puerto);
+    }
 
     public void notificarSalida(String nombre) {
         System.out.println("Saliendo chat: " + nombre);

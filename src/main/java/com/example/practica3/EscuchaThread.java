@@ -1,5 +1,9 @@
 package com.example.practica3;
 
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -9,9 +13,9 @@ public class EscuchaThread extends Thread{
 
     private ServerSocket serverSocket;
     private BufferedReader entrada;
-    private ChatController controller;
+    private AerochatController controller;
 
-    public EscuchaThread(String name, ServerSocket serverSocket, ChatController controller) throws IOException {
+    public EscuchaThread(String name, ServerSocket serverSocket, AerochatController controller) throws IOException {
         super(name);
         this.serverSocket = serverSocket;
         this.controller = controller;
@@ -26,6 +30,14 @@ public class EscuchaThread extends Thread{
                 // Lemos a mensaxe
                 BufferedReader b = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 String mensaxe = b.readLine();
+
+                if(mensaxe.equalsIgnoreCase("SI")){
+                    controller.onAbrirChat(socket);
+                }else{
+                    controller.setWarningText("El usuario a rechazado la conexion");
+
+                }
+
 
                 if(mensaxe.startsWith("SOL")){
                     System.out.println("RECIBIUSE : " + mensaxe);
@@ -42,6 +54,8 @@ public class EscuchaThread extends Thread{
             } catch (IOException e) {
                 System.out.println("Error: " + e.getMessage());
                 break;
+            } catch (Exception e) {
+                throw new RuntimeException(e);
             }
         }
     }
