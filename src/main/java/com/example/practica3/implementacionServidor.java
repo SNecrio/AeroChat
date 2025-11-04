@@ -22,11 +22,10 @@ public class implementacionServidor extends UnicastRemoteObject
       portosClientes = new HashMap<>();
 	}
    
-    public void registrarCliente(String nome, interfazCliente clienteNuevo, String ip, int porto) throws Exception{
+    public void registrarCliente(String nome, interfazCliente clienteNuevo, String ip) throws Exception{
 		//Metemos ao novo cliente no hashmap
         clientes.put(nome, clienteNuevo);
         ipsClientes.put(nome, ip);
-        portosClientes.put(nome, porto);
 		
 		//Notificamos aos demais da nova conexion
 		for(Map.Entry<String,interfazCliente> entrada : clientes.entrySet()){
@@ -222,5 +221,9 @@ public class implementacionServidor extends UnicastRemoteObject
 		md.update(salt);
 		return md.digest(contrasinal.getBytes(StandardCharsets.UTF_8));
 	}
+
+    public void asignarPorto(String nome, int porto) throws RemoteException{
+        portosClientes.put(nome, porto);
+    }
 	
 }

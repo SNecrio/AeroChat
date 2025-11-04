@@ -14,15 +14,13 @@ public class implementacionCliente extends UnicastRemoteObject implements interf
 
     private String name;
     private String IP;
-    private int porto;
     private AerochatController controller;
     private Dictionary<String, ChatController> chatsAbiertos;
 
-    public implementacionCliente(String eName, String eIP, int porto, AerochatController controller) throws RemoteException {
+    public implementacionCliente(String eName, String eIP, AerochatController controller) throws RemoteException {
         super();
         this.name = eName;
         this.IP = eIP;
-        this.porto = porto;
         this.controller = controller;
         chatsAbiertos = new Hashtable<>();
     }
@@ -34,8 +32,6 @@ public class implementacionCliente extends UnicastRemoteObject implements interf
     public String getIP(){
         return IP;
     }
-
-    public int getPorto(){return porto;}
 
     public void anadirChat(String nombre, ChatController chat){ chatsAbiertos.put(nombre, chat); }
 

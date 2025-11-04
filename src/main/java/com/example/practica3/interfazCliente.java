@@ -21,8 +21,6 @@ public interface interfazCliente extends Remote {
     public String getIP()
         throws java.rmi.RemoteException;
 
-    public int getPorto()
-            throws java.rmi.RemoteException;
 /*
     public void anadirChat(String nombre, ChatController chat)
             throws java.rmi.RemoteException;

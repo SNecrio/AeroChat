@@ -212,20 +212,22 @@ public class AerochatController {
                 InetAddress localHost = InetAddress.getLocalHost();
                 String IP = localHost.getHostAddress();
                 System.out.println(IP);
-                // Asignamoslle un porto  REVISAR
+                /*
                 ServerSocket serverSocket = new ServerSocket(0);
                 int porto = serverSocket.getLocalPort();
+                */
+
                 // Creamos o cliente
-                cliente = new implementacionCliente(username, IP, porto,this);
+                cliente = new implementacionCliente(username, IP,this);
 
                 // Rexistramos o cliente no servidor
-                servidor.registrarCliente(username, cliente, IP,porto);
+                servidor.registrarCliente(username, cliente, IP);
                 conected = servidor.obtenerClientesActuales();
                 cliente.actualizarConectados(conected);
 
-                // Arrancamos xa o fio destinado a escoitar peticions doutros clientes
+                /* Arrancamos xa o fio destinado a escoitar peticions doutros clientes
                 EscuchaThread escoita = new EscuchaThread(username,serverSocket,chatController);
-                escoita.start();
+                escoita.start();*/
 
                 Stage stage = (Stage) panel.getScene().getWindow();
                 stage.setOnCloseRequest(event -> {
@@ -440,6 +442,14 @@ public class AerochatController {
             panelConexionOrigen.toFront();
 
             rechazarConexionOrigen.setOnAction(event -> { onTouchFondoNegro(2); });
+
+            //O cliente actual crea un socket
+            ServerSocket serverSocket = new ServerSocket(0);
+            //int porto = serverSocket.getLocalPort();
+            // Arrancamos xa o fio destinado a escoitar peticions doutros clientes
+            EscuchaThread escoita = new EscuchaThread(cliente.getNombre(), serverSocket,chatController);
+            escoita.start();
+
 
             // Enviamoslle ao cliente seleccionado a solicitude de conexion
             String ipDestino = servidor.IPsolicitada(selectedUser);
