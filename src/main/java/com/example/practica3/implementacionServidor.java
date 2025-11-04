@@ -33,7 +33,7 @@ public class implementacionServidor extends UnicastRemoteObject
 			interfazCliente interOutro = entrada.getValue();
 			if(!outro.equals(nome)){
 				try{
-					//interOutro.notificarLlegada(nome);
+					interOutro.notificarLlegada(nome);
 				} catch (Exception e) {
 					System.out.println("Erro rexistrando cliente: " + e);
 				}
@@ -50,7 +50,7 @@ public class implementacionServidor extends UnicastRemoteObject
 		//Notificamos aos demais da desconexion
 		for(interfazCliente interfaz : clientes.values()){
 			try{
-				//interfaz.notificarSalida(nome);
+				interfaz.notificarSalida(nome);
 			} catch (Exception e) {
 				System.out.println("Erro eliminando cliente: " + e);
 			}

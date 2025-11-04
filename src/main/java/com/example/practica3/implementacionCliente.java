@@ -3,7 +3,9 @@ package com.example.practica3;
 import javafx.application.Platform;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.net.ServerSocket;
 import java.rmi.server.*;
 import java.rmi.*;
@@ -37,8 +39,7 @@ public class implementacionCliente extends UnicastRemoteObject implements interf
     public void anadirChat(String nombre, ChatController chat){ chatsAbiertos.put(nombre, chat); }
 
     public void notificarLlegada(String nombre) {
-        System.out.println("Llegando chat: " + nombre);
-        //controller.notiPrincipal.appendText(nombre + " se ha conectado.\n");
+        controller.notiPrincipal.appendText(nombre + " se ha conectado.\n");
     }
 
     public void recibirIntentoConexion(interfazCliente origen, int puerto){
@@ -46,8 +47,7 @@ public class implementacionCliente extends UnicastRemoteObject implements interf
     }
 
     public void notificarSalida(String nombre) {
-        System.out.println("Saliendo chat: " + nombre);
-        //controller.notiPrincipal.appendText(nombre + " se ha desconectado.\n");
+        controller.notiPrincipal.appendText(nombre + " se ha desconectado.\n");
     }
 
     public void actualizarConectados(ArrayList<String> nombres) {
@@ -76,6 +76,41 @@ public class implementacionCliente extends UnicastRemoteObject implements interf
             System.out.println("Erro atopando amigos: " + e);
         }
         return amigos;
+    }
+
+    //Si modo 0 es para meter nuevo amigo, si modo 1 es para eliminar ese amigo de la lista
+    public void rescribirAmigos(String nome, String amigo, int modo) throws java.rmi.RemoteException{
+        try {
+            ArrayList<String> amigos = new ArrayList<>();
+            ArrayList<String> arqEntero = new ArrayList<>();
+            FileReader r = new FileReader(arquivoAmigos);
+            BufferedReader b = new BufferedReader(r);
+            String cadea;
+
+            while((cadea = b.readLine())!=null){
+                String[] partes = cadea.split("\\:");
+                if(partes[0].equals(nome)){
+                    String[] partes2 = partes[1].split("\\|");
+                    amigos.addAll(Arrays.asList(partes2));
+                    if(modo==0 && !amigos.contains(amigo)) amigos.add(amigo);
+                    else if(modo==1) amigos.remove(amigo);
+                    String linea = nome + ":" + String.join("|", amigos);
+                    arqEntero.add(linea);
+                } else {
+                    arqEntero.add(cadea);
+                }
+            }
+
+            FileWriter f = new FileWriter(arquivoAmigos, false);
+            BufferedWriter w = new BufferedWriter(f);
+            for(String a : arqEntero){
+                w.write(a);
+                w.newLine();
+            }
+
+        }catch(Exception e){
+            System.out.println("Erro rescribindo amigos: " + e);
+        }
     }
 
 /*
