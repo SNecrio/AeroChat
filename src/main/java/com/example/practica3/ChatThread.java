@@ -1,5 +1,7 @@
 package com.example.practica3;
 
+import javafx.application.Platform;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -23,7 +25,15 @@ public class ChatThread extends Thread{
        while(true){
             try {
                 String respuesta = entrada.readLine();
-                controller.recibirMensaje(respuesta);
+
+                Platform.runLater(() -> {
+                    try {
+                        controller.recibirMensaje(respuesta);
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                });
+
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }

@@ -485,14 +485,14 @@ public class AerochatController {
             panelConexionDestino.setOpacity(1.0);
             panelConexionDestino.toFront();
 
-            conectandoLabel.setText("Conexion rechazada con");
+            conectandoLabel.setText("Este usuario esta intentando conectar contigo:");
             connectingUserDestino.setText(origen.getNombre());
 
             rechazarConexionDestinoBoton.setOnAction(event -> {rechazarConexionDestino(origen);});
             aceptarConexionDestinoBoton.setOnAction(event -> { aceptarConexionDestino(origen, puerto);});
 
         } catch (Exception e) {
-            warningText.setText("Error conectando usuario");
+            warningText.setText("Un usuario ha intentado conectarse pero fallo");
             throw new RuntimeException(e);
         }
     }
