@@ -39,8 +39,10 @@ public class implementacionCliente extends UnicastRemoteObject implements interf
     public void anadirChat(String nombre, ChatController chat){ chatsAbiertos.put(nombre, chat); }
 
     public void notificarLlegada(String nombre) {
-        controller.notiPrincipal.appendText(nombre + " se ha conectado.\n");
-        controller.recargaAmigos();
+        Platform.runLater(() -> {
+            controller.notiPrincipal.appendText(nombre + " se ha conectado.\n");
+            controller.recargaAmigos();
+        });
     }
 
     public void recibirIntentoConexion(interfazCliente origen, int puerto){
@@ -52,8 +54,10 @@ public class implementacionCliente extends UnicastRemoteObject implements interf
     }
 
     public void notificarSalida(String nombre) {
-        controller.notiPrincipal.appendText(nombre + " se ha desconectado.\n");
-        controller.recargaAmigos();
+        Platform.runLater(() -> {
+            controller.notiPrincipal.appendText(nombre + " se ha desconectado.\n");
+            controller.recargaAmigos();
+        });
     }
 
     public void actualizarConectados(ArrayList<String> nombres) {

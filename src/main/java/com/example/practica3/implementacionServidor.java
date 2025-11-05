@@ -51,6 +51,8 @@ public class implementacionServidor extends UnicastRemoteObject
 		//Notificamos aos amigos da desconexion
 		for(interfazCliente interfaz : clientes.values()){
             ArrayList<String> amigos = inter.listarAmigos(nome);
+            boolean ba = amigos.contains(interfaz.getNombre());
+            int i =4;
             if(amigos != null && amigos.contains(interfaz.getNombre())) {
                 try {
                     interfaz.notificarSalida(nome);
