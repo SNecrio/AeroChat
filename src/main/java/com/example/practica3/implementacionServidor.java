@@ -44,10 +44,14 @@ public class implementacionServidor extends UnicastRemoteObject
 		}
 	}
 	
-	public void borrarCliente(String nome, interfazCliente inter) throws RemoteException{
-        ArrayList<String> amigos = inter.listarAmigos(nome);
-        clientes.remove(nome);
-		System.out.println("Cliente " + nome + " desconectado");
+	public void borrarCliente(String nome) throws RemoteException{
+        ArrayList<String> amigos = null;
+        interfazCliente inter = clientes.get(nome);
+        try {
+            amigos = inter.listarAmigos(nome); // hacerlo antes de desconectarlo
+        } catch (Exception e) {
+            System.out.println("No se pudo obtener la lista antes de eliminar: " + e);
+        }
 
 		//Notificamos aos amigos da desconexion
 		for(interfazCliente interfaz : clientes.values()){
@@ -59,6 +63,8 @@ public class implementacionServidor extends UnicastRemoteObject
                 }
             }
 		}
+        clientes.remove(nome);
+        System.out.println("Cliente " + nome + " desconectado");
 	}
 	
 	public ArrayList<String> obtenerClientesActuales() throws RemoteException{

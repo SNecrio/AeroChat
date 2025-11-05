@@ -8,7 +8,7 @@ public interface interfazServidor extends Remote {
 	public void registrarCliente(String nome, interfazCliente clienteNuevo)
 		throws Exception;
 		
-	public void borrarCliente(String nombre, interfazCliente inter)
+	public void borrarCliente(String nombre)
 		throws java.rmi.RemoteException;
 		
 	public ArrayList<String> obtenerClientesActuales()
