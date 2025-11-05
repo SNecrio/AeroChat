@@ -47,7 +47,7 @@ public class implementacionServidor extends UnicastRemoteObject
 	public void borrarCliente(String nome, interfazCliente inter) throws RemoteException{
 		clientes.remove(nome);
 		System.out.println("Cliente " + nome + " desconectado");
-		
+
 		//Notificamos aos amigos da desconexion
 		for(interfazCliente interfaz : clientes.values()){
             ArrayList<String> amigos = inter.listarAmigos(nome);

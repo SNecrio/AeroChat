@@ -53,6 +53,7 @@ public class implementacionCliente extends UnicastRemoteObject implements interf
 
     public void notificarSalida(String nombre) {
         controller.notiPrincipal.appendText(nombre + " se ha desconectado.\n");
+        controller.recargaAmigos();
     }
 
     public void actualizarConectados(ArrayList<String> nombres) {

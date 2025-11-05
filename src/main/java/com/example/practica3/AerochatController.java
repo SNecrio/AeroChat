@@ -561,6 +561,7 @@ public class AerochatController {
     private void ponerAmigos(ArrayList<String> amigos){
 
         try{
+            vboxAmigos.getChildren().clear();
             for(String amigo : amigos){
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("FriendUser.fxml"));
                 AnchorPane panelAmigo = loader.load();
@@ -608,8 +609,14 @@ public class AerochatController {
     @FXML
     public void borrarAmigo() {
         try {
-            cliente.rescribirAmigos(cliente.getNombre(),friendText.getText(),1);
-            ponerAmigos(cliente.listarAmigos(cliente.getNombre()));
+            String amigo = friendText.getText();
+            if(!cliente.listarAmigos(cliente.getNombre()).contains(amigo)){
+                notiPrincipal.appendText("El usuario no se encuentra en tu lista de amigos.");
+            } else {
+
+                cliente.rescribirAmigos(cliente.getNombre(), amigo, 1);
+                ponerAmigos(cliente.listarAmigos(cliente.getNombre()));
+            }
         } catch (RemoteException e) {
             System.out.println("Error: " + e);
         }
