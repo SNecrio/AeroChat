@@ -236,7 +236,7 @@ public class AerochatController {
                 Stage stage = (Stage) panel.getScene().getWindow();
                 stage.setOnCloseRequest(event -> {
                     try {
-                        servidor.borrarCliente(cliente.getNombre());
+                        servidor.borrarCliente(cliente.getNombre(), cliente);
                         System.exit(0);
                     } catch (RemoteException e) {
                         throw new RuntimeException(e);
@@ -595,7 +595,11 @@ public class AerochatController {
 
         //enviarAmistad
         //warningText.setText("Solicitud enviada");
+    }
 
+    @FXML
+    public void recargaAmigos() {
+       //UwU
     }
 
     public void setWarningText(String warning) {

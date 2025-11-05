@@ -27,33 +27,39 @@ public class implementacionServidor extends UnicastRemoteObject
         clientes.put(nome, clienteNuevo);
         ipsClientes.put(nome, ip);
 		
-		//Notificamos aos demais da nova conexion
+		//Notificamos aos amigos da nova conexion
 		for(Map.Entry<String,interfazCliente> entrada : clientes.entrySet()){
 			String outro = entrada.getKey();
 			interfazCliente interOutro = entrada.getValue();
+            ArrayList<String> amigos = interOutro.listarAmigos(nome);
 			if(!outro.equals(nome)){
-				try{
-					interOutro.notificarLlegada(nome);
-				} catch (Exception e) {
-					System.out.println("Erro rexistrando cliente: " + e);
-				}
+                if(amigos.contains(outro)) {
+                    try {
+                        interOutro.notificarLlegada(nome);
+                    } catch (Exception e) {
+                        System.out.println("Erro rexistrando cliente: " + e);
+                    }
+                }
 			}	
 		}
 		Set<String> actuais = clientes.keySet();
 		ArrayList<String> conectados = new ArrayList<>(actuais);
 	}
 	
-	public void borrarCliente(String nome) throws RemoteException{
+	public void borrarCliente(String nome, interfazCliente inter) throws RemoteException{
 		clientes.remove(nome);
 		System.out.println("Cliente " + nome + " desconectado");
 		
-		//Notificamos aos demais da desconexion
+		//Notificamos aos amigos da desconexion
 		for(interfazCliente interfaz : clientes.values()){
-			try{
-				interfaz.notificarSalida(nome);
-			} catch (Exception e) {
-				System.out.println("Erro eliminando cliente: " + e);
-			}
+            ArrayList<String> amigos = inter.listarAmigos(nome);
+            if(amigos.contains(interfaz.getNombre())) {
+                try {
+                    interfaz.notificarSalida(nome);
+                } catch (Exception e) {
+                    System.out.println("Erro eliminando cliente: " + e);
+                }
+            }
 		}
 	}
 	
