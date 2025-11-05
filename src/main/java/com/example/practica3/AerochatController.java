@@ -568,6 +568,7 @@ public class AerochatController {
                 FriendController controlador = loader.getController();
 
                 boolean conectado = false;
+                conected=servidor.obtenerClientesActuales();
                 if(conected.contains(amigo)){
                     conectado = true;
                 }
@@ -611,9 +612,8 @@ public class AerochatController {
         try {
             String amigo = friendText.getText();
             if(!cliente.listarAmigos(cliente.getNombre()).contains(amigo)){
-                notiPrincipal.appendText("El usuario no se encuentra en tu lista de amigos.");
+                notiPrincipal.appendText("El usuario no se encuentra en tu lista de amigos.\n");
             } else {
-
                 cliente.rescribirAmigos(cliente.getNombre(), amigo, 1);
                 ponerAmigos(cliente.listarAmigos(cliente.getNombre()));
             }
