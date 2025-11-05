@@ -5,7 +5,7 @@ import java.util.ArrayList;
 
 public interface interfazServidor extends Remote {
 
-	public void registrarCliente(String nome, interfazCliente clienteNuevo, String ip, ArrayList<String> amigos)
+	public void registrarCliente(String nome, interfazCliente clienteNuevo, String ip)
 		throws Exception;
 		
 	public void borrarCliente(String nombre, interfazCliente inter)
@@ -30,8 +30,8 @@ public interface interfazServidor extends Remote {
     public boolean cambiarContrasinal(String nome, String contrasinal, String novo)
             throws java.rmi.RemoteException;
 
-    public String IPsolicitada(String nome)
-            throws RemoteException;
+   /* public String IPsolicitada(String nome)
+            throws RemoteException;*/
 
     public int portoSolicitado(String nome)
             throws RemoteException;

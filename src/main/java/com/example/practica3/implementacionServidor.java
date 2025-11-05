@@ -10,32 +10,34 @@ import java.nio.charset.StandardCharsets;
 public class implementacionServidor extends UnicastRemoteObject
     implements interfazServidor {
 	private HashMap<String, interfazCliente> clientes;
-    private HashMap<String, String> ipsClientes;
+    //private HashMap<String, String> ipsClientes;
     private HashMap<String, Integer> portosClientes;
-    private HashMap<String, ArrayList<String>> amigosClientes;
+    //private HashMap<String, ArrayList<String>> amigosClientes;
 	private static String arquivoUsuarios = "usuarios.txt";
     //private static String arquivoSolicitudes = "solicitudes.txt";
   
 	public implementacionServidor() throws RemoteException {
       super( );
 	  clientes = new HashMap<>();
-      ipsClientes = new HashMap<>();
+      //ipsClientes = new HashMap<>();
       portosClientes = new HashMap<>();
-      amigosClientes = new HashMap<>();
+      //amigosClientes = new HashMap<>();
 	}
    
-    public void registrarCliente(String nome, interfazCliente clienteNuevo, String ip, ArrayList<String> amigos) throws Exception{
+    public void registrarCliente(String nome, interfazCliente clienteNuevo, String ip) throws Exception{
 		//Metemos ao novo cliente no hashmap
         clientes.put(nome, clienteNuevo);
-        ipsClientes.put(nome, ip);
-        amigosClientes.put(nome, amigos);
+        //ipsClientes.put(nome, ip);
+        //amigosClientes.put(nome, amigos);
 		
 		//Notificamos aos amigos da nova conexion
 		for(Map.Entry<String,interfazCliente> entrada : clientes.entrySet()){
 			String outro = entrada.getKey();
 			interfazCliente interOutro = entrada.getValue();
 			if(!outro.equals(nome)){
-                if(amigos != null && amigosClientes.get(nome).contains(outro)) {
+                //if(amigos != null && amigosClientes.get(nome).contains(outro)) {
+                ArrayList<String> amig = interOutro.listarAmigos(nome);
+                if(amig!=null && amig.contains(outro)){
                     try {
                         interOutro.notificarLlegada(nome);
                     } catch (Exception e) {
@@ -53,7 +55,7 @@ public class implementacionServidor extends UnicastRemoteObject
 		//Notificamos aos amigos da desconexion
 		for(interfazCliente interfaz : clientes.values()){
             ArrayList<String> amigos = inter.listarAmigos(nome);
-            if(amigos != null && amigosClientes.get(nome).contains(interfaz.getNombre())) {
+            if(amigos != null && amigos.contains(inter.getNombre())) {
                 try {
                     interfaz.notificarSalida(nome);
                 } catch (Exception e) {
@@ -194,14 +196,14 @@ public class implementacionServidor extends UnicastRemoteObject
         }
     }
 
-    public String IPsolicitada(String nome) throws RemoteException{
+    /*public String IPsolicitada(String nome) throws RemoteException{
         try {
             return ipsClientes.get(nome);
         } catch (Exception e){
             System.err.println("Error: " + e);
         }
         return null;
-    }
+    }*/
 
     public int portoSolicitado(String nome) throws RemoteException {
         try {
