@@ -205,15 +205,6 @@ public class implementacionServidor extends UnicastRemoteObject
         }
         return 0;
     }
-/*
-    public void conectarClientes(interfazCliente origen, String destino) throws Exception{
-        interfazCliente clienteDestino = getCliente(destino);
-        clienteDestino.recibirConexion(origen);
-    }
-
-    public void conectarClientesAceptar(){
-        
-    }*/
 	
 	private byte[] hashear(String contrasinal, byte[] salt) throws NoSuchAlgorithmException{
 		MessageDigest md = MessageDigest.getInstance("SHA-512");
@@ -229,6 +220,10 @@ public class implementacionServidor extends UnicastRemoteObject
         interfazCliente clienteDestino = getCliente(destino);
 
         clienteDestino.recibirIntentoConexion(origen, portoSolicitado(origen.getNombre()));
+    }
+
+    public void rechazarConexion(interfazCliente destino, interfazCliente origen) throws Exception{
+        origen.recibirRechazoConexion();
     }
 
 }

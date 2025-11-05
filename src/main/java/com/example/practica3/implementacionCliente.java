@@ -46,6 +46,10 @@ public class implementacionCliente extends UnicastRemoteObject implements interf
         controller.recibirConexion(origen, puerto);
     }
 
+    public void recibirRechazoConexion() throws Exception{
+        controller.intentoConexionRechazado();
+    }
+
     public void notificarSalida(String nombre) {
         controller.notiPrincipal.appendText(nombre + " se ha desconectado.\n");
     }

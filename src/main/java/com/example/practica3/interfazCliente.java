@@ -34,4 +34,5 @@ public interface interfazCliente extends Remote {
 */
 
     public void recibirIntentoConexion(interfazCliente origen, int puerto) throws Exception;
+    public void recibirRechazoConexion() throws Exception;
 }

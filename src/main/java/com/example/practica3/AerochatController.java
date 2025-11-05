@@ -15,8 +15,6 @@ import javafx.scene.layout.BackgroundSize;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.ServerSocket;
@@ -28,8 +26,7 @@ import java.util.ArrayList;
 
 public class AerochatController {
 
-    @FXML
-    private Label warningText;
+
     @FXML
     private AnchorPane panel;
     @FXML
@@ -77,6 +74,8 @@ public class AerochatController {
     @FXML
     public TextArea notiPrincipal;
     @FXML
+    private Label warningText;
+    @FXML
     private Label loginWarning;
     @FXML
     private Label contrasenaWarning;
@@ -85,7 +84,9 @@ public class AerochatController {
     @FXML
     private Label connectingUserDestino;
     @FXML
-    private Button rechazarConexionOrigen;
+    private Label conectandoLabel;
+    @FXML
+    private Button rechazarConexionOrigenBoton;
     @FXML
     private Button rechazarConexionDestinoBoton;
     @FXML
@@ -389,6 +390,8 @@ public class AerochatController {
                 panelConexionOrigen.setOpacity(0);
                 break;
             case 3:
+                rechazarConexionDestinoBoton.setDisable(false);
+                aceptarConexionDestinoBoton.setDisable(false);
                 panelConexionDestino.setDisable(true);
                 panelConexionDestino.setOpacity(0);
                 break;
@@ -448,7 +451,7 @@ public class AerochatController {
             panelConexionOrigen.toFront();
 
             //!Poner en el fxml base
-            rechazarConexionOrigen.setOnAction(event -> { cancelarConexionOrigen(); });
+            rechazarConexionOrigenBoton.setOnAction(event -> { cancelarConexionOrigen(); });
 
             //O cliente actual crea un socket
             ServerSocket serverSocket = new ServerSocket(0);
@@ -481,9 +484,11 @@ public class AerochatController {
             panelConexionDestino.setDisable(false);
             panelConexionDestino.setOpacity(1.0);
             panelConexionDestino.toFront();
+
+            conectandoLabel.setText("Conexion rechazada con");
             connectingUserDestino.setText(origen.getNombre());
 
-            rechazarConexionDestinoBoton.setOnAction(event -> {rechazarConexionDestino(origen, puerto);});
+            rechazarConexionDestinoBoton.setOnAction(event -> {rechazarConexionDestino(origen);});
             aceptarConexionDestinoBoton.setOnAction(event -> { aceptarConexionDestino(origen, puerto);});
 
         } catch (Exception e) {
@@ -500,28 +505,24 @@ public class AerochatController {
         try{
             socket = new Socket(origen.getIP(), puerto);
             out = new PrintWriter(socket.getOutputStream(), true);
+            out.println("SI");
+            onAbrirChat(socket);
         } catch (Exception e) {
             warningText.setText("No se pudo conectar con el usuario");
             throw new RuntimeException(e);
         }
 
-        out.println("SI");
+        onTouchFondoNegro(3);
     }
 
-    protected void rechazarConexionDestino(interfazCliente origen, int puerto){
-
-        Socket socket;
-        PrintWriter out;
+    protected void rechazarConexionDestino(interfazCliente origen){
 
         try{
-            socket = new Socket(origen.getIP(), puerto);
-            out = new PrintWriter(socket.getOutputStream(), true);
+            servidor.rechazarConexion(cliente, origen);
         } catch (Exception e) {
-            warningText.setText("No se pudo conectar con el usuario");
+            warningText.setText("No se pudo mandar el rechazo");
             throw new RuntimeException(e);
         }
-
-        out.println("NO");
 
         onTouchFondoNegro(3);
     }
@@ -531,6 +532,12 @@ public class AerochatController {
         escoita.interrupt();
         onTouchFondoNegro(2);
         //servidor.mandarRechazo
+    }
+
+    protected void intentoConexionRechazado(){
+        rechazarConexionOrigenBoton.setDisable(true);
+        onTouchFondoNegro(2);
+        warningText.setText("Conexion rechazada por el destino");
     }
 
     @FXML
@@ -546,10 +553,6 @@ public class AerochatController {
             chat.show();
             chatController = loader.getController();
             chatController.setUsers(socket,selectedUser);
-
-
-
-
 
         } catch (Exception e) {
             throw new Exception(e);

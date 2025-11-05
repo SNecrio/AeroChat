@@ -40,4 +40,6 @@ public interface interfazServidor extends Remote {
             throws RemoteException;
 
     public void intentarConexion(interfazCliente origen, String destino) throws Exception;
+
+    public void rechazarConexion(interfazCliente destino, interfazCliente origen) throws Exception;
 }

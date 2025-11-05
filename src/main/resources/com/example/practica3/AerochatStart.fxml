@@ -131,7 +131,7 @@
       </AnchorPane>
       <AnchorPane fx:id="panelConexionOrigen" disable="true" layoutX="220.0" layoutY="109.0" opacity="0.0" prefHeight="150.0" prefWidth="135.0">
          <children>
-            <Label fx:id="contrasenaWarning11" alignment="CENTER" layoutY="6.0" prefHeight="31.0" prefWidth="275.0" text="Esperando conexion..." textAlignment="CENTER">
+            <Label fx:id="conectandoLabel" alignment="CENTER" layoutY="6.0" prefHeight="31.0" prefWidth="275.0" text="Esperando conexion..." textAlignment="CENTER">
                <font>
                   <Font size="14.0" />
                </font>
@@ -141,7 +141,7 @@
                   <Font size="14.0" />
                </font>
             </Label>
-            <Button fx:id="rechazarConexionOrigen" layoutX="101.0" layoutY="101.0" mnemonicParsing="false" text="Cancelar" />
+            <Button fx:id="rechazarConexionOrigenBoton" layoutX="101.0" layoutY="101.0" mnemonicParsing="false" text="Cancelar" />
          </children>
       </AnchorPane>
       <ScrollPane layoutX="526.0" layoutY="102.0" prefHeight="308.0" prefWidth="178.0" AnchorPane.bottomAnchor="12.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="102.0">
