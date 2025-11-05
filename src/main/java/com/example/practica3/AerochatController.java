@@ -232,7 +232,8 @@ public class AerochatController {
                 Stage stage = (Stage) panel.getScene().getWindow();
                 stage.setOnCloseRequest(event -> {
                     try {
-                        servidor.borrarCliente(cliente.getNombre());
+                        ArrayList<String> amigos = cliente.listarAmigos(cliente.getNombre());
+                        servidor.borrarCliente(cliente.getNombre(), amigos);
                         System.exit(0);
                     } catch (RemoteException e) {
                         throw new RuntimeException(e);
