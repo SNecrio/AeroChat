@@ -1,6 +1,6 @@
 ## Cambios
 
-- He intentado hacer el paso de mensajes, no he podido
+- Metí cosas de amistad pero aún no acabé asiq no conecté los métodos. NO BORRES AMIGOS, que ahora borra TODOS los amigos registrados.
 
 ## Por implementar
 - Modificar la interfaz gráfica de añadir amistad
