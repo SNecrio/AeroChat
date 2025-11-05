@@ -221,7 +221,7 @@ public class AerochatController {
                 cliente = new implementacionCliente(username, IP,this);
 
                 // Rexistramos o cliente no servidor
-                servidor.registrarCliente(username, cliente, IP);
+                servidor.registrarCliente(username, cliente);
                 conected = servidor.obtenerClientesActuales();
                 cliente.actualizarConectados(conected);
 
@@ -598,7 +598,21 @@ public class AerochatController {
 
     @FXML
     public void recargaAmigos() {
-       //UwU
+        try {
+            ponerAmigos(cliente.listarAmigos(cliente.getNombre()));
+        } catch (RemoteException e) {
+            System.out.println("Error: " + e);
+        }
+    }
+
+    @FXML
+    public void borrarAmigo() {
+        try {
+            cliente.rescribirAmigos(cliente.getNombre(),friendText.getText(),1);
+            ponerAmigos(cliente.listarAmigos(cliente.getNombre()));
+        } catch (RemoteException e) {
+            System.out.println("Error: " + e);
+        }
     }
 
     public void setWarningText(String warning) {

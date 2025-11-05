@@ -10,10 +10,8 @@ import java.nio.charset.StandardCharsets;
 public class implementacionServidor extends UnicastRemoteObject
     implements interfazServidor {
 	private HashMap<String, interfazCliente> clientes;
-    //private HashMap<String, String> ipsClientes;
-    private HashMap<String, Integer> portosClientes;
-    //private HashMap<String, ArrayList<String>> amigosClientes;
-	private static String arquivoUsuarios = "usuarios.txt";
+     private HashMap<String, Integer> portosClientes;
+     private static String arquivoUsuarios = "usuarios.txt";
     //private static String arquivoSolicitudes = "solicitudes.txt";
   
 	public implementacionServidor() throws RemoteException {
@@ -24,12 +22,10 @@ public class implementacionServidor extends UnicastRemoteObject
       //amigosClientes = new HashMap<>();
 	}
    
-    public void registrarCliente(String nome, interfazCliente clienteNuevo, String ip) throws Exception{
+    public void registrarCliente(String nome, interfazCliente clienteNuevo) throws Exception{
 		//Metemos ao novo cliente no hashmap
         clientes.put(nome, clienteNuevo);
-        //ipsClientes.put(nome, ip);
-        //amigosClientes.put(nome, amigos);
-		
+
 		//Notificamos aos amigos da nova conexion
 		for(Map.Entry<String,interfazCliente> entrada : clientes.entrySet()){
 			String outro = entrada.getKey();

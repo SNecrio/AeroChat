@@ -40,6 +40,7 @@ public class implementacionCliente extends UnicastRemoteObject implements interf
 
     public void notificarLlegada(String nombre) {
         controller.notiPrincipal.appendText(nombre + " se ha conectado.\n");
+        controller.recargaAmigos();
     }
 
     public void recibirIntentoConexion(interfazCliente origen, int puerto){
