@@ -216,16 +216,12 @@ public class AerochatController {
                 InetAddress localHost = InetAddress.getLocalHost();
                 String IP = localHost.getHostAddress();
                 System.out.println(IP);
-                /*
-                ServerSocket serverSocket = new ServerSocket(0);
-                int porto = serverSocket.getLocalPort();
-                */
 
                 // Creamos o cliente
                 cliente = new implementacionCliente(username, IP,this);
 
                 // Rexistramos o cliente no servidor
-                servidor.registrarCliente(username, cliente, IP);
+                servidor.registrarCliente(username, cliente, IP, cliente.listarAmigos(username));
                 conected = servidor.obtenerClientesActuales();
                 cliente.actualizarConectados(conected);
 
@@ -264,6 +260,9 @@ public class AerochatController {
             fondoNegro = null;
             try {
                 ponerAmigos(cliente.listarAmigos(username));
+
+                //SOLICITUDES
+
             }catch (Exception e){
                 System.out.println("Erro: " + e);
             }

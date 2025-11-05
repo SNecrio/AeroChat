@@ -12,6 +12,7 @@ public class implementacionServidor extends UnicastRemoteObject
 	private HashMap<String, interfazCliente> clientes;
     private HashMap<String, String> ipsClientes;
     private HashMap<String, Integer> portosClientes;
+    private HashMap<String, ArrayList<String>> amigosClientes;
 	private static String arquivoUsuarios = "usuarios.txt";
     //private static String arquivoSolicitudes = "solicitudes.txt";
   
@@ -20,20 +21,21 @@ public class implementacionServidor extends UnicastRemoteObject
 	  clientes = new HashMap<>();
       ipsClientes = new HashMap<>();
       portosClientes = new HashMap<>();
+      amigosClientes = new HashMap<>();
 	}
    
-    public void registrarCliente(String nome, interfazCliente clienteNuevo, String ip) throws Exception{
+    public void registrarCliente(String nome, interfazCliente clienteNuevo, String ip, ArrayList<String> amigos) throws Exception{
 		//Metemos ao novo cliente no hashmap
         clientes.put(nome, clienteNuevo);
         ipsClientes.put(nome, ip);
+        amigosClientes.put(nome, amigos);
 		
 		//Notificamos aos amigos da nova conexion
 		for(Map.Entry<String,interfazCliente> entrada : clientes.entrySet()){
 			String outro = entrada.getKey();
 			interfazCliente interOutro = entrada.getValue();
-            ArrayList<String> amigos = interOutro.listarAmigos(nome);
 			if(!outro.equals(nome)){
-                if(amigos.contains(outro)) {
+                if(amigos != null && amigosClientes.get(nome).contains(outro)) {
                     try {
                         interOutro.notificarLlegada(nome);
                     } catch (Exception e) {
@@ -42,8 +44,6 @@ public class implementacionServidor extends UnicastRemoteObject
                 }
 			}	
 		}
-		Set<String> actuais = clientes.keySet();
-		ArrayList<String> conectados = new ArrayList<>(actuais);
 	}
 	
 	public void borrarCliente(String nome, interfazCliente inter) throws RemoteException{
@@ -53,7 +53,7 @@ public class implementacionServidor extends UnicastRemoteObject
 		//Notificamos aos amigos da desconexion
 		for(interfazCliente interfaz : clientes.values()){
             ArrayList<String> amigos = inter.listarAmigos(nome);
-            if(amigos.contains(interfaz.getNombre())) {
+            if(amigos != null && amigosClientes.get(nome).contains(interfaz.getNombre())) {
                 try {
                     interfaz.notificarSalida(nome);
                 } catch (Exception e) {

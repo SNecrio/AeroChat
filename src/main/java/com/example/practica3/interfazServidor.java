@@ -5,7 +5,7 @@ import java.util.ArrayList;
 
 public interface interfazServidor extends Remote {
 
-	public void registrarCliente(String nome, interfazCliente clienteNuevo, String ip)
+	public void registrarCliente(String nome, interfazCliente clienteNuevo, String ip, ArrayList<String> amigos)
 		throws Exception;
 		
 	public void borrarCliente(String nombre, interfazCliente inter)

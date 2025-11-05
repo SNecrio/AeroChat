@@ -23,6 +23,9 @@ public interface interfazCliente extends Remote {
 
     public ArrayList<String> listarAmigos(String nome)
             throws java.rmi.RemoteException;
+
+    public void rescribirAmigos(String nome, String amigo, int modo)
+            throws java.rmi.RemoteException;
 /*
     public void anadirChat(String nombre, ChatController chat)
             throws java.rmi.RemoteException;
