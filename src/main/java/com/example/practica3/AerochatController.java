@@ -254,15 +254,9 @@ public class AerochatController {
                     }
                 });
 
-                try{
-                    //Obtener lista de amigos
-                } catch (Exception e) {
-                    warningText.setText("No se pudo obtener la lista de amigos");
-                    throw new RuntimeException(e);
-                }
             } catch (Exception e) {
-                warningText.setText("No se pudo obtener la lista de usuarios actuales");
-                throw new RuntimeException(e);
+                warningText.setText("Error accediendo al usuario");
+                System.out.println("Error: " + e);
             }
 
             //Activar botones y cerrar panel

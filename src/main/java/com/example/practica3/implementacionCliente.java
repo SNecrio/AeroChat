@@ -65,6 +65,12 @@ public class implementacionCliente extends UnicastRemoteObject implements interf
         });
     }
 
+    public void recargarAmigos(){
+        Platform.runLater(() -> {
+            controller.recargaAmigos();
+        });
+    }
+
     public void actualizarConectados(ArrayList<String> nombres) {
         System.out.println("\n Clientes conectados actualmente: ");
         for (String n : nombres){

@@ -219,6 +219,8 @@ public class implementacionServidor extends UnicastRemoteObject
         }catch(Exception e){
             System.out.println("Erro rescribindo amigos: " + e);
         }
+        interfazCliente cliente = clientes.get(amigo);
+        if(cliente!=null) cliente.recargarAmigos();
     }
 
     public ArrayList<String> obtenerUsuariosExistentes() throws RemoteException{
