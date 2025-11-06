@@ -23,6 +23,8 @@ import java.rmi.*;
 
 import java.rmi.Naming;
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Queue;
 
 public class AerochatController {
 
@@ -114,6 +116,9 @@ public class AerochatController {
 
     private ChatController chatController;
     private EscuchaThread escoita;
+
+    private Queue<String> colaSolicitudes = new LinkedList<>();
+    private String solicitanteAmistadActual = null;
 
     @FXML
     public void initialize() throws Exception{
@@ -242,8 +247,9 @@ public class AerochatController {
                     try {
                         ArrayList<String> amigos = cliente.listarAmigos(cliente.getNombre());
                         servidor.borrarCliente(cliente.getNombre(), amigos);
+                        Thread.sleep(500);
                         System.exit(0);
-                    } catch (RemoteException e) {
+                    } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
                 });
@@ -269,8 +275,12 @@ public class AerochatController {
             fondoNegro = null;
             try {
                 ponerAmigos(cliente.listarAmigos(username));
-
-                //SOLICITUDES
+                ArrayList<String> xente = servidor.tieneSolicitudes(cliente.getNombre());
+                if(!xente.isEmpty()){
+                    for(String s : xente){
+                        recibirSolicitud(s);
+                    }
+                }
 
             }catch (Exception e){
                 System.out.println("Erro: " + e);
@@ -619,24 +629,47 @@ public class AerochatController {
     }
 
     @FXML
-    public void recibirSolicitud() {
+    public void recibirSolicitud(String posibleAmigo) {
 
-            panelSolicitudAmistad.setDisable(false);
-            panelSolicitudAmistad.setOpacity(1.0);
-            huecoNombreSolicitante.setText("AAAAAAAAAAA");
-            panelSolicitudAmistad.toFront();
+            colaSolicitudes.add(posibleAmigo);
 
-            btnAceptarAmistad.setDisable(false);
-            btnRechazarAmistad.setDisable(false);
+            if (solicitanteAmistadActual == null) {
+            mostrarSiguienteSolicitud();
+            }
+    }
+
+    private void mostrarSiguienteSolicitud() {
+        solicitanteAmistadActual = colaSolicitudes.poll();
+
+        if (solicitanteAmistadActual == null) {
+            panelSolicitudAmistad.setDisable(true);
+            panelSolicitudAmistad.setOpacity(0.0);
+            panelSolicitudAmistad.toBack();
+            return;
+        }
+
+        panelSolicitudAmistad.setDisable(false);
+        panelSolicitudAmistad.setOpacity(1.0);
+        panelSolicitudAmistad.toFront();
+
+        huecoNombreSolicitante.setText(solicitanteAmistadActual);
+        btnAceptarAmistad.setDisable(false);
+        btnRechazarAmistad.setDisable(false);
     }
 
     @FXML
     public void aceptarAmigo() {
         try {
-            cliente.rescribirAmigos(cliente.getNombre(), "A", 0);
+            cliente.rescribirAmigos(cliente.getNombre(), solicitanteAmistadActual, 0);
             recargaAmigos();
-            panelSolicitudAmistad.setDisable(false);
-            notiPrincipal.appendText("Solicitud de amistad aceptada");
+            notiPrincipal.appendText("Solicitud de amistad aceptada\n");
+            try {
+                servidor.borrarSolicitud(cliente.getNombre(), solicitanteAmistadActual);
+            }catch (RemoteException e){
+                System.out.println("Error: " + e);
+            }
+            solicitanteAmistadActual = null;
+            mostrarSiguienteSolicitud();
         } catch (RemoteException e) {
             System.out.println("Error: " + e);
         }
@@ -644,8 +677,14 @@ public class AerochatController {
 
     @FXML
     public void rechazarAmigo() {
-        notiPrincipal.appendText("Solicitud de amistad rechazada");
-        panelSolicitudAmistad.setDisable(false);
+        notiPrincipal.appendText("Solicitud de amistad rechazada\n");
+        try {
+            servidor.borrarSolicitud(cliente.getNombre(), solicitanteAmistadActual);
+        }catch (RemoteException e){
+            System.out.println("Error: " + e);
+        }
+        solicitanteAmistadActual = null;
+        mostrarSiguienteSolicitud();
     }
 
 

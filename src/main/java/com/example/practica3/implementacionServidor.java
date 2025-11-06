@@ -75,6 +75,10 @@ public class implementacionServidor extends UnicastRemoteObject
         return false;
 	}
 
+    public void borrarSolicitud(String nombre, String amigo) throws RemoteException{
+        //QUEDA POR IMPLEMENTAR
+    }
+
     private boolean noSolicitado(String solicitante, String solicitado) throws RemoteException{
         String cadea;
         try(FileReader f = new FileReader(arquivoSolicitudes)){
@@ -87,6 +91,21 @@ public class implementacionServidor extends UnicastRemoteObject
             System.out.println("Error leyendo solicitudes: " + e);
         }
         return true;
+    }
+
+    public ArrayList<String> tieneSolicitudes(String nome) throws RemoteException{
+        String cadea;
+        ArrayList<String> solicitudes = new ArrayList<>();
+        try(FileReader f = new FileReader(arquivoSolicitudes)){
+            BufferedReader b = new BufferedReader(f);
+            while((cadea = b.readLine())!=null){
+                String[] partes = cadea.split("\\|");
+                if(partes[1].equals(nome)) solicitudes.add(partes[0]);
+            }
+        }catch(Exception e){
+            System.out.println("Error leyendo solicitudes: " + e);
+        }
+        return solicitudes;
     }
 
     public ArrayList<String> obtenerUsuariosExistentes() throws RemoteException{
@@ -226,15 +245,6 @@ public class implementacionServidor extends UnicastRemoteObject
             throw new RuntimeException(e);
         }
     }
-
-    /*public String IPsolicitada(String nome) throws RemoteException{
-        try {
-            return ipsClientes.get(nome);
-        } catch (Exception e){
-            System.err.println("Error: " + e);
-        }
-        return null;
-    }*/
 
     public int portoSolicitado(String nome) throws RemoteException {
         try {

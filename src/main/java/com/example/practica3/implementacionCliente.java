@@ -96,6 +96,7 @@ public class implementacionCliente extends UnicastRemoteObject implements interf
             FileReader r = new FileReader(arquivoAmigos);
             BufferedReader b = new BufferedReader(r);
             String cadea;
+            boolean nomeEstaba=false, amigoEstaba=false;
 
             while((cadea = b.readLine())!=null) {
                 String[] partes = cadea.split("\\:");
@@ -106,31 +107,45 @@ public class implementacionCliente extends UnicastRemoteObject implements interf
                     else if (modo == 1) amigos.remove(amigo);
                     String linea = nome + ":" + String.join("|", amigos);
                     arqEntero.add(linea);
+                    nomeEstaba = true;
                     amigos.clear();
                 } else if(partes[0].equals(amigo)){
                     String[] partes2 = partes[1].split("\\|");
                     amigos.addAll(Arrays.asList(partes2));
                     if (modo == 0 && !amigos.contains(nome)) amigos.add(nome);
                     else if (modo == 1) amigos.remove(nome);
-                    String linea = nome + ":" + String.join("|", amigos);
+                    String linea = amigo + ":" + String.join("|", amigos);
                     arqEntero.add(linea);
+                    amigoEstaba = true;
                     amigos.clear();
                 } else {
                     arqEntero.add(cadea);
                 }
             }
+            if(!nomeEstaba){
+                String linea = nome + ":" + amigo;
+                arqEntero.add(linea);
+            }
+            if(!amigoEstaba){
+                String linea = amigo + ":" + nome;
+                arqEntero.add(linea);
+            }
 
-            FileWriter f = new FileWriter(arquivoAmigos, false);
-            BufferedWriter w = new BufferedWriter(f);
-            for(String a : arqEntero){
-                w.write(a);
-                w.newLine();
+            try(FileWriter f = new FileWriter(arquivoAmigos, false);
+                BufferedWriter w = new BufferedWriter(f);){
+                for(String a : arqEntero){
+                    w.write(a);
+                    w.newLine();
+                }
+            }catch(Exception e){
+                System.out.println("Erro rescribindo amigos: " + e);
             }
 
         }catch(Exception e){
             System.out.println("Erro rescribindo amigos: " + e);
         }
     }
+
 
 /*
     public void confirmarConexion(interfazCliente destino) throws RemoteException {

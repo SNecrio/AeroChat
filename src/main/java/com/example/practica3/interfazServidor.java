@@ -16,6 +16,12 @@ public interface interfazServidor extends Remote {
 		
 	public boolean enviarAmistad(String solicitario, String solicitado)
 		throws java.rmi.RemoteException;
+
+    public void borrarSolicitud(String nombre, String amigo)
+            throws RemoteException;
+
+    public ArrayList<String> tieneSolicitudes(String nome)
+            throws RemoteException;
 		
 	public boolean novoUsuario(String nome, String contrasinal)
 		throws java.rmi.RemoteException;
