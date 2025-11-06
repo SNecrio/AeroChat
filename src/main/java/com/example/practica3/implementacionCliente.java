@@ -18,7 +18,6 @@ public class implementacionCliente extends UnicastRemoteObject implements interf
     private String IP;
     private AerochatController controller;
     private Dictionary<String, ChatController> chatsAbiertos;
-    private static String arquivoAmigos = "amigos.txt";
 
     public implementacionCliente(String eName, String eIP, AerochatController controller) throws RemoteException {
         super();
@@ -71,85 +70,6 @@ public class implementacionCliente extends UnicastRemoteObject implements interf
         for (String n : nombres){
 			System.out.println(" · " + n);
 		}
-    }
-
-    public ArrayList<String> listarAmigos(String nome) throws java.rmi.RemoteException{
-        ArrayList<String> amigos = new ArrayList<>();
-        try(FileReader f = new FileReader(arquivoAmigos)){
-            BufferedReader b = new BufferedReader(f);
-            String cadea;
-
-            while((cadea = b.readLine())!=null){
-                String[] partes = cadea.split("\\:");
-
-                if(partes[0].equals(nome)){
-                   String[] partes2 = partes[1].split("\\|");
-                    amigos.addAll(Arrays.asList(partes2));
-                    break;
-                }
-            }
-        }catch(Exception e){
-            System.out.println("Erro atopando amigos: " + e);
-        }
-        return amigos;
-    }
-
-    //Si modo 0 es para meter nuevo amigo, si modo 1 es para eliminar ese amigo de la lista
-    public void rescribirAmigos(String nome, String amigo, int modo) throws java.rmi.RemoteException{
-        try {
-            ArrayList<String> amigos = new ArrayList<>();
-            ArrayList<String> arqEntero = new ArrayList<>();
-            FileReader r = new FileReader(arquivoAmigos);
-            BufferedReader b = new BufferedReader(r);
-            String cadea;
-            boolean nomeEstaba=false, amigoEstaba=false;
-
-            while((cadea = b.readLine())!=null) {
-                String[] partes = cadea.split("\\:");
-                if (partes[0].equals(nome)) {
-                    String[] partes2 = partes[1].split("\\|");
-                    amigos.addAll(Arrays.asList(partes2));
-                    if (modo == 0 && !amigos.contains(amigo)) amigos.add(amigo);
-                    else if (modo == 1) amigos.remove(amigo);
-                    String linea = nome + ":" + String.join("|", amigos);
-                    arqEntero.add(linea);
-                    nomeEstaba = true;
-                    amigos.clear();
-                } else if(partes[0].equals(amigo)){
-                    String[] partes2 = partes[1].split("\\|");
-                    amigos.addAll(Arrays.asList(partes2));
-                    if (modo == 0 && !amigos.contains(nome)) amigos.add(nome);
-                    else if (modo == 1) amigos.remove(nome);
-                    String linea = amigo + ":" + String.join("|", amigos);
-                    arqEntero.add(linea);
-                    amigoEstaba = true;
-                    amigos.clear();
-                } else {
-                    arqEntero.add(cadea);
-                }
-            }
-            if(!nomeEstaba){
-                String linea = nome + ":" + amigo;
-                arqEntero.add(linea);
-            }
-            if(!amigoEstaba){
-                String linea = amigo + ":" + nome;
-                arqEntero.add(linea);
-            }
-
-            try(FileWriter f = new FileWriter(arquivoAmigos, false);
-                BufferedWriter w = new BufferedWriter(f);){
-                for(String a : arqEntero){
-                    w.write(a);
-                    w.newLine();
-                }
-            }catch(Exception e){
-                System.out.println("Erro rescribindo amigos: " + e);
-            }
-
-        }catch(Exception e){
-            System.out.println("Erro rescribindo amigos: " + e);
-        }
     }
 
 

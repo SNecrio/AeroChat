@@ -26,6 +26,12 @@ public interface interfazServidor extends Remote {
     public void avisarDeSolicitud(String nome, String amigo)
             throws RemoteException;
 
+    public ArrayList<String> listarAmigos(String nome)
+            throws java.rmi.RemoteException;
+
+    public void rescribirAmigos(String nome, String amigo, int modo)
+            throws java.rmi.RemoteException;
+
     public ArrayList<String> obtenerUsuariosExistentes()
             throws RemoteException;
 		

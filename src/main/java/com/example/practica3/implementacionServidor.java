@@ -12,6 +12,7 @@ public class implementacionServidor extends UnicastRemoteObject
 	private HashMap<String, interfazCliente> clientes;   //Incluye a los clientes que están conectados
      private HashMap<String, Integer> portosClientes;
      private static String arquivoUsuarios = "usuarios.txt";
+    private static String arquivoAmigos = "amigos.txt";
     private static String arquivoSolicitudes = "solicitudes.txt";
   
 	public implementacionServidor() throws RemoteException {
@@ -30,7 +31,7 @@ public class implementacionServidor extends UnicastRemoteObject
 			interfazCliente interOutro = entrada.getValue();
 			if(!outro.equals(nome)){
                 //if(amigos != null && amigosClientes.get(nome).contains(outro)) {
-                ArrayList<String> amigo = interOutro.listarAmigos(nome);
+                ArrayList<String> amigo = listarAmigos(nome);
                 if(amigo!=null && amigo.contains(outro)){
                     try {
                         interOutro.notificarLlegada(nome);
@@ -133,6 +134,91 @@ public class implementacionServidor extends UnicastRemoteObject
     public void avisarDeSolicitud(String nome, String amigo) throws RemoteException{
         interfazCliente cliente = clientes.get(nome);
         cliente.notificarAmistad(amigo);
+    }
+
+    public ArrayList<String> listarAmigos(String nome) throws java.rmi.RemoteException{
+        ArrayList<String> amigos = new ArrayList<>();
+        try(FileReader f = new FileReader(arquivoAmigos)){
+            BufferedReader b = new BufferedReader(f);
+            String cadea;
+
+            while((cadea = b.readLine())!=null){
+                String[] partes = cadea.split("\\:");
+
+                if(partes[0].equals(nome)){
+                    String[] partes2 = partes[1].split("\\|");
+                    amigos.addAll(Arrays.asList(partes2));
+                    break;
+                }
+            }
+        }catch(Exception e){
+            System.out.println("Erro atopando amigos: " + e);
+        }
+        return amigos;
+    }
+
+    //Si modo 0 es para meter nuevo amigo, si modo 1 es para eliminar ese amigo de la lista
+    public void rescribirAmigos(String nome, String amigo, int modo) throws java.rmi.RemoteException{
+        try {
+            ArrayList<String> amigos = new ArrayList<>();
+            ArrayList<String> arqEntero = new ArrayList<>();
+            FileReader r = new FileReader(arquivoAmigos);
+            BufferedReader b = new BufferedReader(r);
+            String cadea;
+            boolean nomeEstaba=false, amigoEstaba=false;
+
+            while((cadea = b.readLine())!=null) {
+                String[] partes = cadea.split("\\:");
+                if (partes[0].equals(nome)) {
+                    String[] partes2 = partes[1].split("\\|");
+                    amigos.addAll(Arrays.asList(partes2));
+                    if (modo == 0 && !amigos.contains(amigo)) amigos.add(amigo);
+                    else if (modo == 1) amigos.remove(amigo);
+
+                    if(!amigos.isEmpty()) {
+                        String linea = nome + ":" + String.join("|", amigos);
+                        arqEntero.add(linea);
+                        amigos.clear();
+                    }
+                    nomeEstaba = true;
+                } else if(partes[0].equals(amigo)){
+                    String[] partes2 = partes[1].split("\\|");
+                    amigos.addAll(Arrays.asList(partes2));
+                    if (modo == 0 && !amigos.contains(nome)) amigos.add(nome);
+                    else if (modo == 1) amigos.remove(nome);
+
+                    if(!amigos.isEmpty()) {
+                        String linea = amigo + ":" + String.join("|", amigos);
+                        arqEntero.add(linea);
+                        amigos.clear();
+                    }
+                    amigoEstaba = true;
+                } else {
+                    arqEntero.add(cadea);
+                }
+            }
+            if(!nomeEstaba){
+                String linea = nome + ":" + amigo;
+                arqEntero.add(linea);
+            }
+            if(!amigoEstaba){
+                String linea = amigo + ":" + nome;
+                arqEntero.add(linea);
+            }
+
+            try(FileWriter f = new FileWriter(arquivoAmigos, false);
+                BufferedWriter w = new BufferedWriter(f);){
+                for(String a : arqEntero){
+                    w.write(a);
+                    w.newLine();
+                }
+            }catch(Exception e){
+                System.out.println("Erro rescribindo amigos: " + e);
+            }
+
+        }catch(Exception e){
+            System.out.println("Erro rescribindo amigos: " + e);
+        }
     }
 
     public ArrayList<String> obtenerUsuariosExistentes() throws RemoteException{

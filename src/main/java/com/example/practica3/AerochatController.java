@@ -245,7 +245,7 @@ public class AerochatController {
                 Stage stage = (Stage) panel.getScene().getWindow();
                 stage.setOnCloseRequest(event -> {
                     try {
-                        ArrayList<String> amigos = cliente.listarAmigos(cliente.getNombre());
+                        ArrayList<String> amigos = servidor.listarAmigos(cliente.getNombre());
                         servidor.borrarCliente(cliente.getNombre(), amigos);
                         Thread.sleep(500);
                         System.exit(0);
@@ -274,7 +274,7 @@ public class AerochatController {
             panel.getChildren().remove(fondoNegro);
             fondoNegro = null;
             try {
-                ponerAmigos(cliente.listarAmigos(username));
+                ponerAmigos(servidor.listarAmigos(username));
                 ArrayList<String> xente = servidor.tieneSolicitudes(cliente.getNombre());
                 if(!xente.isEmpty()){
                     for(String s : xente){
@@ -615,7 +615,7 @@ public class AerochatController {
         friendText.setText("");
 
         try {
-            if(cliente.listarAmigos(cliente.getNombre()).contains(nombre)){
+            if(servidor.listarAmigos(cliente.getNombre()).contains(nombre)){
                 notiPrincipal.appendText("El usuario " + nombre + " ya se encuentra en tu lista de amigos\n");
             } else if(!servidor.obtenerUsuariosExistentes().contains(nombre)){
                 notiPrincipal.appendText("El usuario " + nombre + " no existe\n");
@@ -664,7 +664,7 @@ public class AerochatController {
     @FXML
     public void aceptarAmigo() {
         try {
-            cliente.rescribirAmigos(cliente.getNombre(), solicitanteAmistadActual, 0);
+            servidor.rescribirAmigos(cliente.getNombre(), solicitanteAmistadActual, 0);
             recargaAmigos();
             notiPrincipal.appendText("Solicitud de amistad aceptada\n");
             try {
@@ -695,7 +695,7 @@ public class AerochatController {
     @FXML
     public void recargaAmigos() {
         try {
-            ponerAmigos(cliente.listarAmigos(cliente.getNombre()));
+            ponerAmigos(servidor.listarAmigos(cliente.getNombre()));
         } catch (RemoteException e) {
             System.out.println("Error: " + e);
         }
@@ -705,11 +705,11 @@ public class AerochatController {
     public void borrarAmigo() {
         try {
             String amigo = friendText.getText();
-            if(!cliente.listarAmigos(cliente.getNombre()).contains(amigo)){
+            if(!servidor.listarAmigos(cliente.getNombre()).contains(amigo)){
                 notiPrincipal.appendText("El usuario no se encuentra en tu lista de amigos.\n");
             } else {
-                cliente.rescribirAmigos(cliente.getNombre(), amigo, 1);
-                ponerAmigos(cliente.listarAmigos(cliente.getNombre()));
+                servidor.rescribirAmigos(cliente.getNombre(), amigo, 1);
+                ponerAmigos(servidor.listarAmigos(cliente.getNombre()));
             }
         } catch (RemoteException e) {
             System.out.println("Error: " + e);
