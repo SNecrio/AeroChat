@@ -609,11 +609,13 @@ public class AerochatController {
         friendText.setText("");
 
         try {
-            if(servidor.listarAmigos(cliente.getNombre()).contains(nombre)){
+            if (servidor.listarAmigos(cliente.getNombre()).contains(nombre)) {
                 notiPrincipal.appendText("El usuario " + nombre + " ya se encuentra en tu lista de amigos\n");
-            } else if(!servidor.obtenerUsuariosExistentes().contains(nombre)){
+            } else if (!servidor.obtenerUsuariosExistentes().contains(nombre)) {
                 notiPrincipal.appendText("El usuario " + nombre + " no existe\n");
-            } else{
+            }else if(cliente.getNombre().equals(nombre)){
+                notiPrincipal.appendText("¿Estás intentando ser tu propio amigo?\n");
+            }else{
                 if(servidor.enviarAmistad(cliente.getNombre(), nombre)){
                     notiPrincipal.appendText("Solicitud enviada con éxito a " + nombre + "\n");
                     servidor.avisarDeSolicitud(nombre, cliente.getNombre());
@@ -700,10 +702,11 @@ public class AerochatController {
         try {
             String amigo = friendText.getText();
             if(!servidor.listarAmigos(cliente.getNombre()).contains(amigo)){
-                notiPrincipal.appendText("El usuario no se encuentra en tu lista de amigos.\n");
+                notiPrincipal.appendText("El usuario " + amigo + " no se encuentra en tu lista de amigos.\n");
             } else {
                 servidor.rescribirAmigos(cliente.getNombre(), amigo, 1);
                 ponerAmigos(servidor.listarAmigos(cliente.getNombre()));
+                notiPrincipal.appendText("El usuario " + amigo + " ya no se encuentra en tu lista de amigos\n");
             }
         } catch (RemoteException e) {
             System.out.println("Error: " + e);

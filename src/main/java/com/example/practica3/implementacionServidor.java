@@ -133,6 +133,7 @@ public class implementacionServidor extends UnicastRemoteObject
 
     public void avisarDeSolicitud(String nome, String amigo) throws RemoteException{
         interfazCliente cliente = clientes.get(nome);
+        String a = cliente.getNombre();
         cliente.notificarAmistad(amigo);
     }
 
