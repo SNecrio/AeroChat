@@ -166,5 +166,21 @@
             <Cursor fx:constant="HAND" />
          </cursor>
       </Button>
+      <AnchorPane fx:id="solicitudAmistad" disable="true" layoutX="230.0" layoutY="119.0" opacity="0.0" prefHeight="150.0" prefWidth="135.0">
+         <children>
+            <Label fx:id="aceptarAmistad" alignment="CENTER" layoutY="6.0" prefHeight="31.0" prefWidth="275.0" text="Esperando conexion..." textAlignment="CENTER">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
+            <Label fx:id="huecoNombreSolicitante" alignment="CENTER" layoutX="30.0" layoutY="45.0" prefHeight="20.0" prefWidth="215.0" text="UserName" textAlignment="CENTER" AnchorPane.bottomAnchor="85.0" AnchorPane.leftAnchor="30.0">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
+            <Button fx:id="btnAceptarAmistad" layoutX="183.0" layoutY="111.0" mnemonicParsing="false" onAction="#aceptarAmigo" text="Aceptar" />
+            <Button fx:id="btnRechazarAmistad" layoutX="107.0" layoutY="111.0" mnemonicParsing="false" onAction="#rechazarAmigo" text="Cancelar" />
+         </children>
+      </AnchorPane>
    </children>
 </AnchorPane>

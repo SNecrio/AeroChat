@@ -40,6 +40,8 @@ public class AerochatController {
     @FXML
     private AnchorPane panelConexionDestino;
     @FXML
+    private AnchorPane panelSolicitudAmistad;
+    @FXML
     private VBox vboxConectados;
     @FXML
     private VBox vboxAmigos;
@@ -86,11 +88,17 @@ public class AerochatController {
     @FXML
     private Label conectandoLabel;
     @FXML
+    private Label huecoNombreSolicitante;
+    @FXML
     private Button rechazarConexionOrigenBoton;
     @FXML
     private Button rechazarConexionDestinoBoton;
     @FXML
     private Button aceptarConexionDestinoBoton;
+    @FXML
+    private Button btnAceptarAmistad;
+    @FXML
+    private Button btnRechazarAmistad;
 
     private ArrayList<String> conected;
     private ArrayList<interfazCliente> friendList;
@@ -601,7 +609,7 @@ public class AerochatController {
             } else if(!servidor.obtenerUsuariosExistentes().contains(nombre)){
                 notiPrincipal.appendText("El usuario " + nombre + " no existe\n");
             } else{
-                if(servidor.enviarAmistad(cliente.getNombre(), nombre)) notiPrincipal.appendText("Solicitud enviada con éxito a: " + nombre + "\n");
+                if(servidor.enviarAmistad(cliente.getNombre(), nombre)) notiPrincipal.appendText("Solicitud enviada con éxito a " + nombre + "\n");
                 else notiPrincipal.appendText("El usuario " + nombre + " ya tiene una solicitud pendiente de amistad.\n");
             }
         } catch (RemoteException e) {
@@ -609,6 +617,37 @@ public class AerochatController {
         }
         //warningText.setText("Solicitud enviada");
     }
+
+    @FXML
+    public void recibirSolicitud() {
+
+            panelSolicitudAmistad.setDisable(false);
+            panelSolicitudAmistad.setOpacity(1.0);
+            huecoNombreSolicitante.setText("AAAAAAAAAAA");
+            panelSolicitudAmistad.toFront();
+
+            btnAceptarAmistad.setDisable(false);
+            btnRechazarAmistad.setDisable(false);
+    }
+
+    @FXML
+    public void aceptarAmigo() {
+        try {
+            cliente.rescribirAmigos(cliente.getNombre(), "A", 0);
+            recargaAmigos();
+            panelSolicitudAmistad.setDisable(false);
+            notiPrincipal.appendText("Solicitud de amistad aceptada");
+        } catch (RemoteException e) {
+            System.out.println("Error: " + e);
+        }
+    }
+
+    @FXML
+    public void rechazarAmigo() {
+        notiPrincipal.appendText("Solicitud de amistad rechazada");
+        panelSolicitudAmistad.setDisable(false);
+    }
+
 
     @FXML
     public void recargaAmigos() {

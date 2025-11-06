@@ -63,8 +63,8 @@ public class implementacionServidor extends UnicastRemoteObject
 	
 	public boolean enviarAmistad(String solicitante, String solicitado) throws RemoteException{
         if(noSolicitado(solicitante, solicitado)){
-            try(FileWriter f = new FileWriter(arquivoSolicitudes, true)){
-                BufferedWriter w = new BufferedWriter(f);
+            try (FileWriter f = new FileWriter(arquivoSolicitudes, true);
+                 BufferedWriter w = new BufferedWriter(f)) {
                 w.write(solicitante + "|" + solicitado);
                 w.newLine();
                 return true;
