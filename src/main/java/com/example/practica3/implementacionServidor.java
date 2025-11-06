@@ -9,17 +9,15 @@ import java.nio.charset.StandardCharsets;
 
 public class implementacionServidor extends UnicastRemoteObject
     implements interfazServidor {
-	private HashMap<String, interfazCliente> clientes;
+	private HashMap<String, interfazCliente> clientes;   //Incluye a los clientes que están conectados
      private HashMap<String, Integer> portosClientes;
      private static String arquivoUsuarios = "usuarios.txt";
-    //private static String arquivoSolicitudes = "solicitudes.txt";
+    private static String arquivoSolicitudes = "solicitudes.txt";
   
 	public implementacionServidor() throws RemoteException {
       super( );
 	  clientes = new HashMap<>();
-      //ipsClientes = new HashMap<>();
       portosClientes = new HashMap<>();
-      //amigosClientes = new HashMap<>();
 	}
    
     public void registrarCliente(String nome, interfazCliente clienteNuevo) throws Exception{
@@ -32,8 +30,8 @@ public class implementacionServidor extends UnicastRemoteObject
 			interfazCliente interOutro = entrada.getValue();
 			if(!outro.equals(nome)){
                 //if(amigos != null && amigosClientes.get(nome).contains(outro)) {
-                ArrayList<String> amig = interOutro.listarAmigos(nome);
-                if(amig!=null && amig.contains(outro)){
+                ArrayList<String> amigo = interOutro.listarAmigos(nome);
+                if(amigo!=null && amigo.contains(outro)){
                     try {
                         interOutro.notificarLlegada(nome);
                     } catch (Exception e) {
@@ -63,9 +61,48 @@ public class implementacionServidor extends UnicastRemoteObject
 		return new ArrayList<>(clientes.keySet());
 	}
 	
-	public void enviarAmistad() throws RemoteException{
-		
+	public boolean enviarAmistad(String solicitante, String solicitado) throws RemoteException{
+        if(noSolicitado(solicitante, solicitado)){
+            try(FileWriter f = new FileWriter(arquivoSolicitudes, true)){
+                BufferedWriter w = new BufferedWriter(f);
+                w.write(solicitante + "|" + solicitado);
+                w.newLine();
+                return true;
+            } catch(Exception e){
+                System.out.println("Error en envío de amistad: " + e);
+            }
+        }
+        return false;
 	}
+
+    private boolean noSolicitado(String solicitante, String solicitado) throws RemoteException{
+        String cadea;
+        try(FileReader f = new FileReader(arquivoSolicitudes)){
+            BufferedReader b = new BufferedReader(f);
+            while((cadea = b.readLine())!=null){
+                String[] partes = cadea.split("\\|");
+                if(partes[0].equals(solicitante) && partes[1].equals(solicitado)) return false;
+            }
+        }catch(Exception e){
+            System.out.println("Error leyendo solicitudes: " + e);
+        }
+        return true;
+    }
+
+    public ArrayList<String> obtenerUsuariosExistentes() throws RemoteException{
+        String cadea;
+        ArrayList<String> usuarios = new ArrayList<>();
+        try(FileReader f = new FileReader(arquivoUsuarios)){
+            BufferedReader b = new BufferedReader(f);
+            while((cadea = b.readLine())!=null){
+                String[] partes = cadea.split("\\|");
+                usuarios.add(partes[0]);
+            }
+        }catch(Exception e){
+            System.out.println("Error obteniendo los usuarios: " + e);
+        }
+        return usuarios;
+    }
 	
 	public boolean novoUsuario(String nome, String contrasinal){
 		try{

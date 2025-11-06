@@ -595,7 +595,18 @@ public class AerochatController {
 
         friendText.setText("");
 
-        //enviarAmistad
+        try {
+            if(cliente.listarAmigos(cliente.getNombre()).contains(nombre)){
+                notiPrincipal.appendText("El usuario " + nombre + " ya se encuentra en tu lista de amigos\n");
+            } else if(!servidor.obtenerUsuariosExistentes().contains(nombre)){
+                notiPrincipal.appendText("El usuario " + nombre + " no existe\n");
+            } else{
+                if(servidor.enviarAmistad(cliente.getNombre(), nombre)) notiPrincipal.appendText("Solicitud enviada con éxito a: " + nombre + "\n");
+                else notiPrincipal.appendText("El usuario " + nombre + " ya tiene una solicitud pendiente de amistad.\n");
+            }
+        } catch (RemoteException e) {
+            System.err.println("Error enviando amistad");
+        }
         //warningText.setText("Solicitud enviada");
     }
 

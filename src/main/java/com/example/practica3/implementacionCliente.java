@@ -97,15 +97,24 @@ public class implementacionCliente extends UnicastRemoteObject implements interf
             BufferedReader b = new BufferedReader(r);
             String cadea;
 
-            while((cadea = b.readLine())!=null){
+            while((cadea = b.readLine())!=null) {
                 String[] partes = cadea.split("\\:");
-                if(partes[0].equals(nome)){
+                if (partes[0].equals(nome)) {
                     String[] partes2 = partes[1].split("\\|");
                     amigos.addAll(Arrays.asList(partes2));
-                    if(modo==0 && !amigos.contains(amigo)) amigos.add(amigo);
-                    else if(modo==1) amigos.remove(amigo);
+                    if (modo == 0 && !amigos.contains(amigo)) amigos.add(amigo);
+                    else if (modo == 1) amigos.remove(amigo);
                     String linea = nome + ":" + String.join("|", amigos);
                     arqEntero.add(linea);
+                    amigos.clear();
+                } else if(partes[0].equals(amigo)){
+                    String[] partes2 = partes[1].split("\\|");
+                    amigos.addAll(Arrays.asList(partes2));
+                    if (modo == 0 && !amigos.contains(nome)) amigos.add(nome);
+                    else if (modo == 1) amigos.remove(nome);
+                    String linea = nome + ":" + String.join("|", amigos);
+                    arqEntero.add(linea);
+                    amigos.clear();
                 } else {
                     arqEntero.add(cadea);
                 }

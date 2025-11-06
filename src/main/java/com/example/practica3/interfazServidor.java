@@ -14,7 +14,7 @@ public interface interfazServidor extends Remote {
 	public ArrayList<String> obtenerClientesActuales()
 		throws java.rmi.RemoteException;
 		
-	public void enviarAmistad()
+	public boolean enviarAmistad(String solicitario, String solicitado)
 		throws java.rmi.RemoteException;
 		
 	public boolean novoUsuario(String nome, String contrasinal)
@@ -22,6 +22,9 @@ public interface interfazServidor extends Remote {
 	
 	public boolean accederUsuario(String nome, String contrasinal)
 		throws java.rmi.RemoteException;
+
+    public ArrayList<String> obtenerUsuariosExistentes()
+            throws RemoteException;
 
     public interfazCliente getCliente(String nome) throws Exception;
 /*

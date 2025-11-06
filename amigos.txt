@@ -1,3 +1,2 @@
-Martina:Sergio|Sofia
+Martina:Sergio
 Sergio:Martina
-Sofia:Martina
