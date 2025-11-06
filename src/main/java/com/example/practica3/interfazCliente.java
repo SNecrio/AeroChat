@@ -11,6 +11,9 @@ public interface interfazCliente extends Remote {
 		
 	public void notificarSalida(String nombre)
 		throws java.rmi.RemoteException;
+
+    public void notificarAmistad(String amigo)
+            throws java.rmi.RemoteException;
 		
 	public void actualizarConectados(ArrayList<String> nombres)
 		throws java.rmi.RemoteException;

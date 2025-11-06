@@ -601,6 +601,7 @@ public class AerochatController {
 
     }
 
+    //Función para solicitar amistad
     @FXML
     public void anadirAmigo() {
 
@@ -619,8 +620,11 @@ public class AerochatController {
             } else if(!servidor.obtenerUsuariosExistentes().contains(nombre)){
                 notiPrincipal.appendText("El usuario " + nombre + " no existe\n");
             } else{
-                if(servidor.enviarAmistad(cliente.getNombre(), nombre)) notiPrincipal.appendText("Solicitud enviada con éxito a " + nombre + "\n");
-                else notiPrincipal.appendText("El usuario " + nombre + " ya tiene una solicitud pendiente de amistad.\n");
+                if(servidor.enviarAmistad(cliente.getNombre(), nombre)){
+                    notiPrincipal.appendText("Solicitud enviada con éxito a " + nombre + "\n");
+                    servidor.avisarDeSolicitud(nombre, cliente.getNombre());
+                }
+                else notiPrincipal.appendText("Ya le has enviado una solicitud de amistad al usuario " + nombre + "\n");
             }
         } catch (RemoteException e) {
             System.err.println("Error enviando amistad");

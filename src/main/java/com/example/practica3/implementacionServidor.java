@@ -76,7 +76,29 @@ public class implementacionServidor extends UnicastRemoteObject
 	}
 
     public void borrarSolicitud(String nombre, String amigo) throws RemoteException{
-        //QUEDA POR IMPLEMENTAR
+        String cadea;
+        ArrayList<String> arqEnteiro = new ArrayList<>();
+        try(FileReader f = new FileReader(arquivoSolicitudes)){
+            BufferedReader b = new BufferedReader(f);
+            while((cadea = b.readLine())!=null){
+                String[] partes = cadea.split("\\|");
+                if(!(partes[0].equals(amigo) && partes[1].equals(nombre))){
+                    arqEnteiro.add(cadea);
+                }
+            }
+        }catch(Exception e){
+            System.out.println("Error leyendo solicitudes: " + e);
+        }
+
+        try (FileWriter f = new FileWriter(arquivoSolicitudes, false);
+             BufferedWriter w = new BufferedWriter(f)) {
+            for(String s : arqEnteiro) {
+                w.write(s);
+                w.newLine();
+            }
+        } catch(Exception e){
+            System.out.println("Error actualizando solicitudes: " + e);
+        }
     }
 
     private boolean noSolicitado(String solicitante, String solicitado) throws RemoteException{
@@ -106,6 +128,11 @@ public class implementacionServidor extends UnicastRemoteObject
             System.out.println("Error leyendo solicitudes: " + e);
         }
         return solicitudes;
+    }
+
+    public void avisarDeSolicitud(String nome, String amigo) throws RemoteException{
+        interfazCliente cliente = clientes.get(nome);
+        cliente.notificarAmistad(amigo);
     }
 
     public ArrayList<String> obtenerUsuariosExistentes() throws RemoteException{
