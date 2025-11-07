@@ -17,8 +17,11 @@
          </content>
       </ScrollPane>
       <TextArea fx:id="messageArea" layoutX="20.0" layoutY="355.0" prefHeight="60.0" prefWidth="612.0" promptText="Escribe aqui tu mensaje..." AnchorPane.bottomAnchor="7.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="86.0" />
-      <Label fx:id="usuarioLabel" layoutX="20.0" layoutY="14.0" text="Nombre_User" AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="14.0" />
-      <Button layoutX="642.0" layoutY="355.0" mnemonicParsing="false" onAction="#enviarMensaje" prefHeight="60.0" prefWidth="58.0" text="⬆️" AnchorPane.bottomAnchor="7.0" AnchorPane.rightAnchor="18.0">
+      <Label fx:id="usuarioLabel" layoutX="20.0" layoutY="14.0" text="Nombre_User" AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="14.0">
+         <font>
+            <Font name="System Bold" size="22.0" />
+         </font></Label>
+      <Button fx:id="sendButton" layoutX="642.0" layoutY="355.0" mnemonicParsing="false" onAction="#enviarMensaje" prefHeight="60.0" prefWidth="58.0" text="↑" AnchorPane.bottomAnchor="7.0" AnchorPane.rightAnchor="18.0">
          <cursor>
             <Cursor fx:constant="HAND" />
          </cursor>

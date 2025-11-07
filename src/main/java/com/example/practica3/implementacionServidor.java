@@ -10,17 +10,17 @@ import java.nio.charset.StandardCharsets;
 public class implementacionServidor extends UnicastRemoteObject
     implements interfazServidor {
 	private HashMap<String, interfazCliente> clientes;   //Incluye a los clientes que están conectados
-     private HashMap<String, Integer> portosClientes;
-     private static String arquivoUsuarios = "usuarios.txt";
+
+    private static String arquivoUsuarios = "usuarios.txt";
     private static String arquivoAmigos = "amigos.txt";
     private static String arquivoSolicitudes = "solicitudes.txt";
   
 	public implementacionServidor() throws RemoteException {
       super( );
 	  clientes = new HashMap<>();
-      portosClientes = new HashMap<>();
 	}
-   
+
+    //Server: si son amigos, le mandas la interfaz, si no, se jode
     public void registrarCliente(String nome, interfazCliente clienteNuevo) throws Exception{
 		//Metemos ao novo cliente no hashmap
         clientes.put(nome, clienteNuevo);
@@ -133,7 +133,6 @@ public class implementacionServidor extends UnicastRemoteObject
 
     public void avisarDeSolicitud(String nome, String amigo) throws RemoteException{
         interfazCliente cliente = clientes.get(nome);
-        String a = cliente.getNombre();
         cliente.notificarAmistad(amigo);
     }
 
@@ -362,33 +361,22 @@ public class implementacionServidor extends UnicastRemoteObject
         }
     }
 
-    public int portoSolicitado(String nome) throws RemoteException {
-        try {
-            return portosClientes.get(nome);
-        } catch (Exception e) {
-        System.out.println("Error: " + e);
-        }
-        return 0;
-    }
-	
 	private byte[] hashear(String contrasinal, byte[] salt) throws NoSuchAlgorithmException{
 		MessageDigest md = MessageDigest.getInstance("SHA-512");
 		md.update(salt);
 		return md.digest(contrasinal.getBytes(StandardCharsets.UTF_8));
 	}
 
-    public void asignarPorto(String nome, int porto) throws RemoteException{
-        portosClientes.put(nome, porto);
-    }
-
     public void intentarConexion(interfazCliente origen, String destino) throws Exception {
         interfazCliente clienteDestino = getCliente(destino);
-
-        clienteDestino.recibirIntentoConexion(origen, portoSolicitado(origen.getNombre()));
+        clienteDestino.recibirIntentoConexion(origen);
     }
 
-    public void rechazarConexion(interfazCliente destino, interfazCliente origen) throws Exception{
+    public void aceptarConexion(interfazCliente origen, interfazCliente destino) throws Exception{
+        origen.recibirAceptacionConexion(destino);
+    }
+
+    public void rechazarConexion(interfazCliente origen) throws Exception{
         origen.recibirRechazoConexion();
     }
-
 }

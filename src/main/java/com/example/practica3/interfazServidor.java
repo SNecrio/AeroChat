@@ -7,13 +7,13 @@ public interface interfazServidor extends Remote {
 
 	public void registrarCliente(String nome, interfazCliente clienteNuevo)
 		throws Exception;
-		
+
 	public void borrarCliente(String nombre,  ArrayList<String> amigos)
 		throws java.rmi.RemoteException;
-		
+
 	public ArrayList<String> obtenerClientesActuales()
 		throws java.rmi.RemoteException;
-		
+
 	public boolean enviarAmistad(String solicitario, String solicitado)
 		throws java.rmi.RemoteException;
 
@@ -34,10 +34,10 @@ public interface interfazServidor extends Remote {
 
     public ArrayList<String> obtenerUsuariosExistentes()
             throws RemoteException;
-		
+
 	public boolean novoUsuario(String nome, String contrasinal)
 		throws java.rmi.RemoteException;
-	
+
 	public boolean accederUsuario(String nome, String contrasinal)
 		throws java.rmi.RemoteException;
 
@@ -48,16 +48,11 @@ public interface interfazServidor extends Remote {
     public boolean cambiarContrasinal(String nome, String contrasinal, String novo)
             throws java.rmi.RemoteException;
 
-   /* public String IPsolicitada(String nome)
-            throws RemoteException;*/
-
-    public int portoSolicitado(String nome)
-            throws RemoteException;
-
-    public void asignarPorto(String nome, int porto)
-            throws RemoteException;
-
     public void intentarConexion(interfazCliente origen, String destino) throws Exception;
 
-    public void rechazarConexion(interfazCliente destino, interfazCliente origen) throws Exception;
+    public void rechazarConexion(interfazCliente origen) throws Exception;
+
+    public void aceptarConexion(interfazCliente origen, interfazCliente destino) throws Exception;
+
+
 }

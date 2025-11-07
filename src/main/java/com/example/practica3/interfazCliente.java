@@ -2,19 +2,21 @@ package com.example.practica3;
 
 import java.rmi.*;
 import java.util.ArrayList;
-import java.net.*;
 
 public interface interfazCliente extends Remote {
 
-	public void notificarLlegada(String nombre)
+	void notificarLlegada(String nombre)
 		throws java.rmi.RemoteException;
-		
-	public void notificarSalida(String nombre)
+
+	void notificarSalida(String nombre)
 		throws java.rmi.RemoteException;
+
+    void anadirCliente(String nombre, interfazCliente cliente, ChatController chat)
+            throws java.rmi.RemoteException;
 
     public void notificarAmistad(String amigo)
             throws java.rmi.RemoteException;
-		
+
 	public void actualizarConectados(ArrayList<String> nombres)
 		throws java.rmi.RemoteException;
 
@@ -24,19 +26,14 @@ public interface interfazCliente extends Remote {
     public String getNombre()
         throws java.rmi.RemoteException;
 
-    public String getIP()
-        throws java.rmi.RemoteException;
-
-/*
-    public void anadirChat(String nombre, ChatController chat)
+    public void enviarMensaje(String destino, String mensaje)
             throws java.rmi.RemoteException;
 
+    public void recibirMensaje(String origen, String mensaje)
+            throws java.rmi.RemoteException;
 
-
-    void confirmarConexion(interfazCliente destino)
-            throws RemoteException;
-*/
-
-    public void recibirIntentoConexion(interfazCliente origen, int puerto) throws Exception;
+    public void recibirIntentoConexion(interfazCliente origen) throws Exception;
     public void recibirRechazoConexion() throws Exception;
+    public void recibirAceptacionConexion(interfazCliente destino) throws Exception;
+    public void recibirSalida(String origen) throws Exception;
 }

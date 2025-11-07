@@ -1,12 +1,18 @@
 ## Cambios
 
-- La parte relacionada a enviar solicitudes, hacer o borrar amigos está implementada.
+- YA FUNCIONAN LOS MENSAJEEEEEEEEEEEEEEEEEES
+- La ventana de amigos ya funciona correctamente y tiene fondo
+- Ahora algunos mensajes que antes se hacian con warnings ahora se hacen con la ventana de notificaciones
+- Ahora para eliminar amigos hay que hacerlo clickando en su entrada en la lista de amigos (asi que sean botones sirve de algo)
+- Si no introduces ninguna IP, te manda automaticamente a `localhost`
 
-## Por implementar
-- Modificar la interfaz gráfica de añadir amistad (Le falta el recuadro de fondo)
+## Cosas por hacer
+- Resolver todo tipo de bugs con botones y demas
+- Si hay tiempo, cambiar la interfaz que reciben los clientes, no deberia ser interfazCliente, deberia ser una nueva que no tenga tantas funcionalidades, interfazCliente deberia quedar solo para el servidor
 
-## Errores
-- El programa no cierra: si le das a la X se queda pillado y no entiendo por qué
-- Cuando se envía una solicitud de amistad, si la otra persona está online tiene que salir y volver a entrar para que le llegue (lo arreglaré)
+## Extra
+- Hacer que no se puedan pulsar botones si estas en un menu (con las flechas y en enter a veces te deja)
+- Encriptar mensajes
+
 # AeroChat
 Chat P2P con servidor RMI para sincronizado

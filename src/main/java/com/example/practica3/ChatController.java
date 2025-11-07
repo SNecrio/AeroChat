@@ -1,21 +1,12 @@
 package com.example.practica3;
 
-import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
-
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.net.Socket;
-import java.rmi.RemoteException;
 import java.time.LocalTime;
-import java.util.ArrayList;
 
 public class ChatController {
 
@@ -29,22 +20,18 @@ public class ChatController {
     private TextArea messageArea;
     @FXML
     private Label usuarioLabel;
+    @FXML
+    private Button sendButton;
 
-    private String destino;
-    private interfazServidor servidor;
-
-    private BufferedReader entrada;
-    private PrintWriter salida;
-    private Socket socket;
-
-    private ChatThread hilo;
+    private interfazCliente cliente;
+    private interfazCliente destino;
 
     @FXML
-    public void initialize() throws Exception{
+    public void initialize(){
 
         messageArea.setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.ENTER) {
-                //enviarMensaje();
+                enviarMensaje();
             }
         });
 
@@ -79,24 +66,16 @@ public class ChatController {
         chatbox.toFront();
     }
 
-    public void setUsers(Socket socket, String destino) throws Exception{
-        this.destino = destino;
-        usuarioLabel.setText(destino);
+    public void setUsers(interfazCliente cliente, interfazCliente destino) throws Exception{
 
-        try{
-            this.socket = socket;
-            salida = new PrintWriter(socket.getOutputStream(), true);
-            hilo = new ChatThread("Receptor",socket,this);
-            hilo.start();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        this.cliente = cliente;
+        this.destino = destino;
+        usuarioLabel.setText(destino.getNombre());
 
         Stage stage = (Stage) panel.getScene().getWindow();
         stage.setOnCloseRequest(event -> {
             try {
-                salida.println("USR DESCONECTADO");
-                System.exit(0);
+                notificarSalida();
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -112,13 +91,12 @@ public class ChatController {
             return;
         }
         try{
-            //Label usuario = new Label(LocalTime.now().getHour() + ":" + LocalTime.now().getMinute() + "| " + cliente.getNombre());
-            Label usuario = new Label(LocalTime.now().getHour() + ":" + LocalTime.now().getMinute() + "| ");
+            Label usuario = new Label(LocalTime.now().getHour() + ":" + LocalTime.now().getMinute() + "| " + cliente.getNombre());
             Label mensaje = new Label(mensajeEnviar);
             chatbox.getChildren().add(usuario);
             chatbox.getChildren().add(mensaje);
 
-            salida.println(mensajeEnviar);
+            cliente.enviarMensaje(destino.getNombre(), mensajeEnviar);
 
         } catch (Exception e) {
             System.err.println("Error en el mandado de mensaje");
@@ -133,20 +111,24 @@ public class ChatController {
 
     @FXML
     protected void recibirMensaje(String mensajeRecibido) throws Exception{
-
-        if(mensajeRecibido.equalsIgnoreCase("USR DESCONECTADO")){
-            //Label mensaje = new Label(destino.getNombre() + " se ha desconectado");
-            Label mensaje = new Label("Usuario desconectado");
-            mensaje.setStyle("-fx-text-fill: #cf0000;"); //Rojo
-            chatbox.getChildren().add(mensaje);
-            return;
-        }
-
-        //Label usuario = new Label(LocalTime.now().getHour() + ":" + LocalTime.now().getMinute() + "| " + destino.getNombre());
-        Label usuario = new Label(LocalTime.now().getHour() + ":" + LocalTime.now().getMinute() + "| ");
+        Label usuario = new Label(LocalTime.now().getHour() + ":" + LocalTime.now().getMinute() + "| " + destino.getNombre());
         Label mensaje = new Label(mensajeRecibido);
 
         chatbox.getChildren().add(usuario);
         chatbox.getChildren().add(mensaje);
+    }
+
+    @FXML
+    protected void recibirSalida() throws Exception{
+        Label aviso = new Label(LocalTime.now().getHour() + ":" + LocalTime.now().getMinute() + "| " + destino.getNombre() + " se ha desconectado");
+
+        aviso.setStyle("-fx-text-fill: #cf0000;"); //Rojo
+        chatbox.getChildren().add(aviso);
+        messageArea.setDisable(true);
+        sendButton.setDisable(true);
+    }
+
+    protected void notificarSalida() throws Exception {
+        destino.recibirSalida(cliente.getNombre());
     }
 }
