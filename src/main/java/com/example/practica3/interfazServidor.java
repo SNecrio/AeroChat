@@ -6,7 +6,7 @@ import java.util.ArrayList;
 public interface interfazServidor extends Remote {
 
     /**
-     * Función para registrar un cliente como conectado por el servidor
+     * Función para dar acceso a un cliente al servidor
      * @param nome Nombre del cliente recién conectado
      * @param clienteNuevo Interfaz del cliente recién conectado
      */
@@ -49,31 +49,70 @@ public interface interfazServidor extends Remote {
     public void borrarSolicitud(String nombre, String amigo)
             throws RemoteException;
 
+    /**
+     * Función que devuelve una lista de nombres de usuarios que le han solicitado amistad a un cliente
+     * @param nome Nombre del cliente al que le han solicitado amistad
+     */
     public ArrayList<String> tieneSolicitudes(String nome)
             throws RemoteException;
 
+    /**
+     * Función para avisar a un cliente de que le han solicitado amistad
+     * @param nome Nombre del cliente al que le han solicitado amistad
+     * @param amigo Nombre del cliente que ha pedido amistad
+     */
     public void avisarDeSolicitud(String nome, String amigo)
             throws RemoteException;
 
+    /**
+     * Función que devuelve la lista de amigos de un cliente
+     * @param nome Nombre del cliente del que consultar la lista de amigos
+     */
     public ArrayList<String> listarAmigos(String nome)
             throws java.rmi.RemoteException;
 
+    /**
+     * Función para modificar la lista de amigos de un cliente
+     * @param nome Nombre del cliente del que queremos modificar las amistades
+     * @param amigo Nombre del usuario que será añadido o eliminado de la lista de amigos
+     * @param modo Valor que nos indica si la modificación será de inserción (0) o de borrado (1)
+     */
     public void rescribirAmigos(String nome, String amigo, int modo)
             throws java.rmi.RemoteException;
 
+    /**
+     * Función para registrar un nuevo usuario en el servidor
+     * @param nome Nombre del cliente que desea registrarse
+     * @param contrasinal Contraseña que el cliente quiere asociar a su usuario
+     */
 	public boolean novoUsuario(String nome, String contrasinal)
 		throws java.rmi.RemoteException;
 
+    /**
+     * Función para acceder a un usuario ya registrado
+     * @param nome Nombre del cliente que desea acceder
+     * @param contrasinal Contraseña del usuario
+     */
 	public boolean accederUsuario(String nome, String contrasinal)
 		throws java.rmi.RemoteException;
 
-    public interfazCliente getCliente(String nome) throws Exception;
-/*
-    public void conectarClientes(interfazCliente origen, String destino) throws Exception;
-*/
+    /**
+     * Función para modificar la contraseña de un usuario
+     * @param nome Nombre del cliente del que se quiere cambiar la contraseña
+     * @param contrasinal Contraseña actual del usuario
+     * @param novo Contraseña nueva del usuario
+     */
     public boolean cambiarContrasinal(String nome, String contrasinal, String novo)
             throws java.rmi.RemoteException;
 
+    /*
+    public interfazCliente getCliente(String nome)
+            throws Exception;*/
+
+
+    /**
+     * Función que inicia el intento de comunicación
+     */
     public void intentarConexion(interfazCliente origen, String destino) throws Exception;
 
     public void rechazarConexion(interfazCliente origen) throws Exception;

@@ -96,7 +96,7 @@ public class implementacionServidor extends UnicastRemoteObject
         String cadea;
         ArrayList<String> arqEnteiro = new ArrayList<>();
 
-        // Rescribimos el archivo de solicitudes omitiendo la ya tramitada
+        // Leemos el archivo de solicitudes, omitiendo la solicitud deseada
         try(FileReader f = new FileReader(arquivoSolicitudes)){
             BufferedReader b = new BufferedReader(f);
             while((cadea = b.readLine())!=null){
@@ -109,6 +109,7 @@ public class implementacionServidor extends UnicastRemoteObject
             System.out.println("Error leyendo solicitudes: " + e);
         }
 
+        // Rescribimos el archivo de salida
         try (FileWriter f = new FileWriter(arquivoSolicitudes, false);
              BufferedWriter w = new BufferedWriter(f)) {
             for(String s : arqEnteiro) {
@@ -120,6 +121,7 @@ public class implementacionServidor extends UnicastRemoteObject
         }
     }
 
+    //Función para comprobar si un cliente ya le ha enviado una solicitud a otro
     private boolean noSolicitado(String solicitante, String solicitado) throws RemoteException{
         String cadea;
         try(FileReader f = new FileReader(arquivoSolicitudes)){
@@ -156,13 +158,15 @@ public class implementacionServidor extends UnicastRemoteObject
 
     public ArrayList<String> listarAmigos(String nome) throws java.rmi.RemoteException{
         ArrayList<String> amigos = new ArrayList<>();
+
+        //Leemos el archivo y guardamos los nombres de los amigos del cliente dado
         try(FileReader f = new FileReader(arquivoAmigos)){
             BufferedReader b = new BufferedReader(f);
             String cadea;
-
+            //Separamos la cadena leida en partes
             while((cadea = b.readLine())!=null){
                 String[] partes = cadea.split("\\:");
-
+                //Comprobamos que el nombre leido coincida con el proporcionado
                 if(partes[0].equals(nome)){
                     String[] partes2 = partes[1].split("\\|");
                     amigos.addAll(Arrays.asList(partes2));
@@ -175,11 +179,12 @@ public class implementacionServidor extends UnicastRemoteObject
         return amigos;
     }
 
-    //Si modo 0 es para meter nuevo amigo, si modo 1 es para eliminar ese amigo de la lista
     public void rescribirAmigos(String nome, String amigo, int modo) throws java.rmi.RemoteException{
         try {
             ArrayList<String> amigos = new ArrayList<>();
             ArrayList<String> arqEntero = new ArrayList<>();
+
+            //Leemos el archivo de amigos
             FileReader r = new FileReader(arquivoAmigos);
             BufferedReader b = new BufferedReader(r);
             String cadea;
@@ -187,19 +192,22 @@ public class implementacionServidor extends UnicastRemoteObject
 
             while((cadea = b.readLine())!=null) {
                 String[] partes = cadea.split("\\:");
+
+                //Comprobamos si el nombre encontrado coindice con el del usuario a modificar
                 if (partes[0].equals(nome)) {
                     String[] partes2 = partes[1].split("\\|");
                     amigos.addAll(Arrays.asList(partes2));
-                    if (modo == 0 && !amigos.contains(amigo)) amigos.add(amigo);
-                    else if (modo == 1) amigos.remove(amigo);
-
+                    if (modo == 0 && !amigos.contains(amigo)) amigos.add(amigo);  //Añadimos el amigo a la lista
+                    else if (modo == 1) amigos.remove(amigo); //Quitamos al amigo de la lista
+                    //Si el usuario aún tiene otros amigos, lo mantenemos en el archivo. Si no, no lo rescribimos.
                     if(!amigos.isEmpty()) {
                         String linea = nome + ":" + String.join("|", amigos);
                         arqEntero.add(linea);
                         amigos.clear();
                     }
-                    nomeEstaba = true;
+                    nomeEstaba = true; //Indicamos que el usuario tenía una entrada en el archivo
                 } else if(partes[0].equals(amigo)){
+                    //Repetimos el proceso pero para el otro usuario, ya que cada uno tiene una entrada en el archivo
                     String[] partes2 = partes[1].split("\\|");
                     amigos.addAll(Arrays.asList(partes2));
                     if (modo == 0 && !amigos.contains(nome)) amigos.add(nome);
@@ -215,6 +223,7 @@ public class implementacionServidor extends UnicastRemoteObject
                     arqEntero.add(cadea);
                 }
             }
+            //Si el usuario o amigo no estaba en el archivo, lo añadimos
             if(!nomeEstaba){
                 String linea = nome + ":" + amigo;
                 arqEntero.add(linea);
@@ -223,7 +232,7 @@ public class implementacionServidor extends UnicastRemoteObject
                 String linea = amigo + ":" + nome;
                 arqEntero.add(linea);
             }
-
+            //Rescribimos el archivo ya con los cambios aplicados
             try(FileWriter f = new FileWriter(arquivoAmigos, false);
                 BufferedWriter w = new BufferedWriter(f);){
                 for(String a : arqEntero){
@@ -231,30 +240,32 @@ public class implementacionServidor extends UnicastRemoteObject
                     w.newLine();
                 }
             }catch(Exception e){
-                System.out.println("Erro rescribindo amigos: " + e);
+                System.out.println("Erroe rescribiendo amigos: " + e);
             }
 
         }catch(Exception e){
-            System.out.println("Erro rescribindo amigos: " + e);
+            System.out.println("Error rescribiendo amigos: " + e);
         }
         interfazCliente cliente = clientes.get(amigo);
+        //Actualizamos la interfaz gráfica del amigo que hemos añadido/borrado
         if(cliente!=null) cliente.recargarAmigos();
     }
 	
 	public boolean novoUsuario(String nome, String contrasinal){
 		try{
+            //Si el usuario existe no creamos uno nuevo
 			if(usuarioExiste(nome)){
                 return false;
 			} else {
-                //Hasheamos o contrasinal para que sexa seguro
-                //Xeramos o salt
+                //Hasheamos la contraseña para no escribirla en texto plano
+                //Generamos el salt
                 SecureRandom random = new SecureRandom();
                 byte[] salt = new byte[16];
                 random.nextBytes(salt);
-                //Calculamos o hash
+                //Calculamos el hash
                 byte[] hash = hashear(contrasinal, salt);
 
-                //Escribimos o novo usuario no arqiuvo
+                //Escribimos el nuevo usuario en el archivo
                 FileWriter f = new FileWriter(arquivoUsuarios, true);
                 try(BufferedWriter w = new BufferedWriter(f)){
                     w.write(nome + "|"+Base64.getEncoder().encodeToString(salt)+"|"+Base64.getEncoder().encodeToString(hash));
@@ -271,18 +282,19 @@ public class implementacionServidor extends UnicastRemoteObject
 	}
 	
 	public boolean accederUsuario(String nome, String contrasinal){
-		String cadea; 
+		String cadea;
+        //Leemos el archivo donde se encuentran los usuarios
 		try(FileReader f = new FileReader(arquivoUsuarios)){
 			BufferedReader b = new BufferedReader(f);
 
 			while((cadea = b.readLine())!=null){
 				String[] partes = cadea.split("\\|");
-
+                //Comprobamos que el nombre proporcionado esté en el archivo
 				if(partes[0].equals(nome)){
 					byte[] salt = Base64.getDecoder().decode(partes[1]);
 					byte[] hashGardado = Base64.getDecoder().decode(partes[2]);
 					byte[] hashActual = hashear(contrasinal, salt);
-					//Comprobamos se a contrasinal é a mesma
+					//Comprobamos si la contraseña dada es la misma que la almacenada
 					return Arrays.equals(hashGardado, hashActual);
 				}	
 			}
@@ -308,22 +320,22 @@ public class implementacionServidor extends UnicastRemoteObject
                     salt = Base64.getDecoder().decode(partes[1]);
                     byte[] hashGardado = Base64.getDecoder().decode(partes[2]);
                     byte[] hashActual = hashear(contrasinal, salt);
-                    //Comprobamos se o contrasinal é o mesmo
+                    //Comprobamos que la contraseña proporcionada coincida con la almacenada
                     if(Arrays.equals(hashGardado, hashActual)){
                         coincide = true;
+                        //Encriptamos la nueva contraseña
                         SecureRandom random = new SecureRandom();
                         salt = new byte[16];
                         random.nextBytes(salt);
                         //Calculamos o hash
                         hash = hashear(novo, salt);
-
                         rescritura.add(nome + "|"+Base64.getEncoder().encodeToString(salt)+"|"+Base64.getEncoder().encodeToString(hash));
                         }
                 } else {
                     rescritura.add(cadea);
                 }
             }
-
+            //Rescribimos el archivo con la contraseña modificada
             if(coincide){
                 FileWriter fw = new FileWriter(arquivoUsuarios, false);
                 try(BufferedWriter w = new BufferedWriter(fw)){
@@ -340,7 +352,15 @@ public class implementacionServidor extends UnicastRemoteObject
 
         return coincide;
     }
-	
+
+    //Función hash para encriptar las contraseñas
+    private byte[] hashear(String contrasinal, byte[] salt) throws NoSuchAlgorithmException{
+        MessageDigest md = MessageDigest.getInstance("SHA-512");
+        md.update(salt);
+        return md.digest(contrasinal.getBytes(StandardCharsets.UTF_8));
+    }
+
+    //Función para comprobar si el nombre de un usuario dado ya está registrado en el archivo
 	private boolean usuarioExiste(String nome) throws Exception{
 		String cadea; 
 		File arq = new File(arquivoUsuarios);
@@ -354,24 +374,8 @@ public class implementacionServidor extends UnicastRemoteObject
 		return false;
 	}
 
-    public interfazCliente getCliente(String nome) throws Exception{
-
-        try{
-            return clientes.get(nome);
-        } catch (Exception e) {
-            System.err.println("No se encontro usuario con ese nombre");
-            throw new RuntimeException(e);
-        }
-    }
-
-	private byte[] hashear(String contrasinal, byte[] salt) throws NoSuchAlgorithmException{
-		MessageDigest md = MessageDigest.getInstance("SHA-512");
-		md.update(salt);
-		return md.digest(contrasinal.getBytes(StandardCharsets.UTF_8));
-	}
-
     public void intentarConexion(interfazCliente origen, String destino) throws Exception {
-        interfazCliente clienteDestino = getCliente(destino);
+        interfazCliente clienteDestino = clientes.get(destino);
         clienteDestino.recibirIntentoConexion(origen);
     }
 

@@ -490,6 +490,7 @@ public class AerochatController {
             throw new RuntimeException(e);
         }
     }
+
     public void intentoConexionAceptado(interfazCliente destino) throws Exception {
         if(!tratandoConexion){
             throw new Exception();
@@ -497,6 +498,7 @@ public class AerochatController {
         onTouchFondoNegro(2);
         abrirChat(destino);
     }
+
     public void abrirChat(interfazCliente destino) throws Exception{
         FXMLLoader loader = new FXMLLoader(getClass().getResource("AerochatChat.fxml"));
         Scene scene = new Scene(loader.load(), 720, 440);
