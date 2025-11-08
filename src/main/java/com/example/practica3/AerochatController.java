@@ -224,7 +224,7 @@ public class AerochatController {
                 // Rexistramos o cliente no servidor
                 servidor.registrarCliente(username, cliente);
                 conected = servidor.obtenerClientesActuales();
-                cliente.actualizarConectados(conected);
+                //cliente.actualizarConectados(conected);
 
                 Stage stage = (Stage) panel.getScene().getWindow();
                 stage.setOnCloseRequest(event -> {

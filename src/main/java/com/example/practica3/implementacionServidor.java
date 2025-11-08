@@ -20,23 +20,21 @@ public class implementacionServidor extends UnicastRemoteObject
 	  clientes = new HashMap<>();
 	}
 
-    //Server: si son amigos, le mandas la interfaz, si no, se jode
     public void registrarCliente(String nome, interfazCliente clienteNuevo) throws Exception{
-		//Metemos ao novo cliente no hashmap
+		//Metemos al nuevo cliente en el HashMap de clientes conectados
         clientes.put(nome, clienteNuevo);
 
-		//Notificamos aos amigos da nova conexion
+		//Notificamos a sus amigos da la nueva conexión
 		for(Map.Entry<String,interfazCliente> entrada : clientes.entrySet()){
 			String outro = entrada.getKey();
 			interfazCliente interOutro = entrada.getValue();
 			if(!outro.equals(nome)){
-                //if(amigos != null && amigosClientes.get(nome).contains(outro)) {
                 ArrayList<String> amigo = listarAmigos(nome);
                 if(amigo!=null && amigo.contains(outro)){
                     try {
                         interOutro.notificarLlegada(nome);
                     } catch (Exception e) {
-                        System.out.println("Erro rexistrando cliente: " + e);
+                        System.out.println("Error rexistrando cliente: " + e);
                     }
                 }
 			}	
@@ -44,26 +42,44 @@ public class implementacionServidor extends UnicastRemoteObject
 	}
 	
 	public void borrarCliente(String nome, ArrayList<String> amigos) throws RemoteException{
-		//Notificamos aos amigos da desconexion
+		//Notificamos a los amigos de la desconexión
 		for(interfazCliente interfaz : clientes.values()){
             if(amigos != null && amigos.contains(interfaz.getNombre())) {
                 try {
                     interfaz.notificarSalida(nome);
                 } catch (Exception e) {
-                    System.out.println("Erro eliminando cliente: " + e);
+                    System.out.println("Error eliminando cliente: " + e);
                 }
             }
 		}
         clientes.remove(nome);
-        System.out.println("Cliente " + nome + " desconectado");
 	}
 	
 	public ArrayList<String> obtenerClientesActuales() throws RemoteException{
 		return new ArrayList<>(clientes.keySet());
 	}
+
+    public ArrayList<String> obtenerUsuariosExistentes() throws RemoteException{
+        String cadea;
+        ArrayList<String> usuarios = new ArrayList<>();
+
+        // Leemos el archivo de registro de los clientes para obtener sus nombres
+        try(FileReader f = new FileReader(arquivoUsuarios)){
+            BufferedReader b = new BufferedReader(f);
+            while((cadea = b.readLine())!=null){
+                String[] partes = cadea.split("\\|");
+                usuarios.add(partes[0]);
+            }
+        }catch(Exception e){
+            System.out.println("Error obteniendo los usuarios: " + e);
+        }
+        return usuarios;
+    }
 	
 	public boolean enviarAmistad(String solicitante, String solicitado) throws RemoteException{
         if(noSolicitado(solicitante, solicitado)){
+
+            // Añadimos una solicitud de amistad con los nombres correspondientes al archivo de solicitudes
             try (FileWriter f = new FileWriter(arquivoSolicitudes, true);
                  BufferedWriter w = new BufferedWriter(f)) {
                 w.write(solicitante + "|" + solicitado);
@@ -79,6 +95,8 @@ public class implementacionServidor extends UnicastRemoteObject
     public void borrarSolicitud(String nombre, String amigo) throws RemoteException{
         String cadea;
         ArrayList<String> arqEnteiro = new ArrayList<>();
+
+        // Rescribimos el archivo de solicitudes omitiendo la ya tramitada
         try(FileReader f = new FileReader(arquivoSolicitudes)){
             BufferedReader b = new BufferedReader(f);
             while((cadea = b.readLine())!=null){
@@ -221,21 +239,6 @@ public class implementacionServidor extends UnicastRemoteObject
         }
         interfazCliente cliente = clientes.get(amigo);
         if(cliente!=null) cliente.recargarAmigos();
-    }
-
-    public ArrayList<String> obtenerUsuariosExistentes() throws RemoteException{
-        String cadea;
-        ArrayList<String> usuarios = new ArrayList<>();
-        try(FileReader f = new FileReader(arquivoUsuarios)){
-            BufferedReader b = new BufferedReader(f);
-            while((cadea = b.readLine())!=null){
-                String[] partes = cadea.split("\\|");
-                usuarios.add(partes[0]);
-            }
-        }catch(Exception e){
-            System.out.println("Error obteniendo los usuarios: " + e);
-        }
-        return usuarios;
     }
 	
 	public boolean novoUsuario(String nome, String contrasinal){

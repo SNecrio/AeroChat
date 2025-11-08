@@ -21,8 +21,18 @@ public class implementacionCliente extends UnicastRemoteObject implements interf
         chatsAbiertos = new Hashtable<>();
     }
 
-    public String getNombre(){
-        return name;
+    public void notificarLlegada(String nombre) {
+        Platform.runLater(() -> {
+            controller.notiPrincipal.appendText(nombre + " se ha conectado.\n");
+            controller.recargaAmigos();
+        });
+    }
+
+    public void notificarSalida(String nombre) {
+        Platform.runLater(() -> {
+            controller.notiPrincipal.appendText(nombre + " se ha desconectado.\n");
+            controller.recargaAmigos();
+        });
     }
 
     public void anadirCliente(String nombre, interfazCliente cliente, ChatController chat){
@@ -30,9 +40,14 @@ public class implementacionCliente extends UnicastRemoteObject implements interf
         chatsAbiertos.put(nombre,chat);
     }
 
-    public void notificarLlegada(String nombre) {
+    public void notificarAmistad(String amigo) {
         Platform.runLater(() -> {
-            controller.notiPrincipal.appendText(nombre + " se ha conectado.\n");
+            controller.recibirSolicitud(amigo);
+        });
+    }
+
+    public void recargarAmigos(){
+        Platform.runLater(() -> {
             controller.recargaAmigos();
         });
     }
@@ -59,30 +74,17 @@ public class implementacionCliente extends UnicastRemoteObject implements interf
         });
     }
 
-    public void notificarSalida(String nombre) {
-        Platform.runLater(() -> {
-            controller.notiPrincipal.appendText(nombre + " se ha desconectado.\n");
-            controller.recargaAmigos();
-        });
-    }
+    public void recibirSalida(String origen){
+        ChatController chat = chatsAbiertos.get(origen);
 
-    public void notificarAmistad(String amigo) {
         Platform.runLater(() -> {
-            controller.recibirSolicitud(amigo);
+            try{
+                chat.recibirSalida();
+            } catch (Exception e) {
+                controller.setWarningText("Error recibiendo salida");
+                throw new RuntimeException(e);
+            }
         });
-    }
-
-    public void recargarAmigos(){
-        Platform.runLater(() -> {
-            controller.recargaAmigos();
-        });
-    }
-
-    public void actualizarConectados(ArrayList<String> nombres) {
-        System.out.println("\n Clientes conectados actualmente: ");
-        for (String n : nombres){
-			System.out.println(" · " + n);
-		}
     }
 
     public void enviarMensaje(String destino, String mensaje){
@@ -111,16 +113,7 @@ public class implementacionCliente extends UnicastRemoteObject implements interf
         });
     }
 
-    public void recibirSalida(String origen){
-        ChatController chat = chatsAbiertos.get(origen);
-
-        Platform.runLater(() -> {
-            try{
-                chat.recibirSalida();
-            } catch (Exception e) {
-                controller.setWarningText("Error recibiendo salida");
-                throw new RuntimeException(e);
-            }
-        });
+    public String getNombre(){
+        return name;
     }
 }
