@@ -109,6 +109,7 @@ public class AerochatController {
 
     private boolean tratandoConexion = false;
 
+    //Función para inicializar el interfaz gráfico
     @FXML
     public void initialize(){
 
@@ -173,13 +174,15 @@ public class AerochatController {
 
     }
 
+    //Función para iniciar sesión
     @FXML
     private void login(){
-
+        //Se toman los campos proporcionados por el usuario
         String username = usernameText.getText();
         String password = passwordText.getText();
         String ip = ipText.getText();
 
+        //Diferentes casuísitcas no aceptadas
         if(username.isBlank()){
             loginWarning.setText("Introduzca un usuario valido");
             return;
@@ -188,7 +191,10 @@ public class AerochatController {
             loginWarning.setText("Los usuarios no pueden contener '|'");
             return;
         }
-
+        if(username.contains(":")){
+            loginWarning.setText("Los usuarios no pueden contener ':'");
+            return;
+        }
         if(password.isBlank()){
             loginWarning.setText("Introduzca una contraseña valida");
             return;
@@ -198,6 +204,7 @@ public class AerochatController {
         }
 
         try{
+            //Creamos el servidor RMI
             Conectar(ip);
         } catch (Exception e) {
             loginWarning.setText("Error conectandose a servidor");
@@ -206,8 +213,9 @@ public class AerochatController {
 
         boolean loginSuccess=false;
         try{
+            //Si el cliente no estaba registrado en el archivo de usuarios, se crea un usuario nuevo
             if(servidor.novoUsuario(username,password)) {
-                loginSuccess = true;//!
+                loginSuccess = true;
             }else{
                 loginSuccess = servidor.accederUsuario(username, password);
             }
@@ -215,20 +223,20 @@ public class AerochatController {
             loginWarning.setText(e.getMessage());
         }
 
-        //Se conecto al servidor bien
         if(loginSuccess){
             try{
-                // Creamos o cliente
+                //Creamos el cliente
                 cliente = new implementacionCliente(username,this);
 
-                // Rexistramos o cliente no servidor
+                //Registramos al cliente en el servidor
                 servidor.registrarCliente(username, cliente);
                 conected = servidor.obtenerClientesActuales();
-                //cliente.actualizarConectados(conected);
 
+                //Definimos la acción en caso de cerrarse la ventana del programa
                 Stage stage = (Stage) panel.getScene().getWindow();
                 stage.setOnCloseRequest(event -> {
                     try {
+                        //El cliente es borrado del registro de clientes conectados del servidor
                         ArrayList<String> amigos = servidor.listarAmigos(cliente.getNombre());
                         servidor.borrarCliente(cliente.getNombre(), amigos);
                         Thread.sleep(500);
@@ -252,6 +260,7 @@ public class AerochatController {
             panel.getChildren().remove(fondoNegro);
             fondoNegro = null;
             try {
+                //Se muestran los amigos del cliente por pantalla y sus solicitudes de amistad si las tiene
                 ponerAmigos(servidor.listarAmigos(username));
                 ArrayList<String> xente = servidor.tieneSolicitudes(cliente.getNombre());
                 if(!xente.isEmpty()){
@@ -268,6 +277,7 @@ public class AerochatController {
         }
     }
 
+    //Función para cambiar la contraseña de un usuario
     @FXML
     private void changePassword(){
 
@@ -285,6 +295,7 @@ public class AerochatController {
 
         boolean success;
         try{
+            //El servidor es el encargado de cambiar la contraseña
             success = servidor.cambiarContrasinal(cliente.getNombre(), oldPassword, newPassword);
         } catch (Exception e) {
             contrasenaWarning.setText("Error cambiando contraseña");
@@ -299,20 +310,20 @@ public class AerochatController {
             friendText.setDisable(false);
             for(var boton : botonesPrincipal)
                 boton.setDisable(false);
-
             panelContrasena.setDisable(true);
             panelContrasena.setOpacity(0);
-
             panel.getChildren().remove(fondoNegro);
             fondoNegro = null;
         }
     }
 
+    //Función que crea un interfazServidor RMI
     private void Conectar(String hostName) throws Exception {
         String registryURL = "rmi://" + hostName+ ":1099/aerochat";
         servidor = (interfazServidor)Naming.lookup(registryURL);
     }
 
+    //Función que muestra el panel con la gente conectada
     @FXML
     protected void onGenteConectada() {
         crearFondoNegro(0);
@@ -328,6 +339,7 @@ public class AerochatController {
         botonesConectados();
     }
 
+    //Función que muestra los nombres de los usuarios conectados
     @FXML
     protected void botonesConectados(){
         vboxConectados.getChildren().clear();
@@ -345,6 +357,7 @@ public class AerochatController {
         }
     }
 
+    //Función que muestra un fondo negro
     private void crearFondoNegro(int panelID){
 
         if(fondoNegro != null){
@@ -403,6 +416,7 @@ public class AerochatController {
         warningText.setText("");
     }
 
+    //Función que muestra la pantalla de cambio de contraseña
     @FXML
     protected void onCambiarContrasena() {
         crearFondoNegro(1);
@@ -416,6 +430,7 @@ public class AerochatController {
         panelContrasena.toFront();
     }
 
+    //Función que reconoce el usuario seleccionado por el cliente actual
     @FXML
     protected void onUserClick(String nombre){
         try{
@@ -427,8 +442,7 @@ public class AerochatController {
         }
     }
 
-    ///CONEXION
-    //Comenzar conexion
+    //Función para comenzar la conexión entre dos clientes
     @FXML
     protected void intentarConexion(){
 
@@ -451,6 +465,8 @@ public class AerochatController {
             throw new RuntimeException(e);
         }
     }
+
+    //Función que muestra la ventana de intento de conexión
     @FXML
     protected void recibirConexion(interfazCliente origen){
 
@@ -478,7 +494,7 @@ public class AerochatController {
         }
     }
 
-    //Aceptar conexion
+    //Función para que un cliente pueda aceptar la conexión con otro
     public void aceptarConexionDestino(interfazCliente origen){
 
         onTouchFondoNegro(3);
@@ -537,6 +553,7 @@ public class AerochatController {
         notiPrincipal.appendText("Conexion rechazada por el destino\n");
     }
 
+    //Función que muestra los amigos de un usuario en el panel de amigos
     private void ponerAmigos(ArrayList<String> amigos){
 
         try{
@@ -588,7 +605,9 @@ public class AerochatController {
             }else{
                 if(servidor.enviarAmistad(cliente.getNombre(), nombre)){
                     notiPrincipal.appendText("Solicitud enviada con éxito a " + nombre + "\n");
-                    servidor.avisarDeSolicitud(nombre, cliente.getNombre());
+                    //Se le avisa al cliente notificado de que alguien le ha solicitado amistad (si está conectado)
+                    conected=servidor.obtenerClientesActuales();
+                    if(conected.contains(nombre)) servidor.avisarDeSolicitud(nombre, cliente.getNombre());
                 }
                 else notiPrincipal.appendText("Ya le has enviado una solicitud de amistad al usuario " + nombre + "\n");
             }
@@ -597,16 +616,17 @@ public class AerochatController {
         }
     }
 
+    //Función para avisar a un cliente que le han enviado una solicitud de amistad
     @FXML
     public void recibirSolicitud(String posibleAmigo) {
-
+            //Se añade el nombre del solicitante a una cola (por si se tienen varias solicitudes)
             colaSolicitudes.add(posibleAmigo);
-
             if (solicitanteAmistadActual == null) {
             mostrarSiguienteSolicitud();
             }
     }
 
+    //Función para mostrar al siguiente solicitante en la cola (si lo hay)
     private void mostrarSiguienteSolicitud() {
         solicitanteAmistadActual = colaSolicitudes.poll();
 
@@ -627,20 +647,25 @@ public class AerochatController {
         btnRechazarAmistad.setDisable(false);
     }
 
+    //Función para añadir un usuario como amigo
     @FXML
     public void aceptarAmigo() {
 
         onTouchFondoNegro(4);
         try {
+            //Se llama a la función de rescritura con el modo de añadir amigos
             servidor.rescribirAmigos(cliente.getNombre(), solicitanteAmistadActual, 0);
+            //Se recarga el panel de amigos
             recargaAmigos();
             notiPrincipal.appendText("Solicitud de amistad aceptada\n");
             try {
+                //Se borra la solicitud ya tramitada del archivo
                 servidor.borrarSolicitud(cliente.getNombre(), solicitanteAmistadActual);
             }catch (RemoteException e){
                 System.out.println("Error: " + e);
             }
             solicitanteAmistadActual = null;
+            //Se muestra la siguiente solicitud (si la hay)
             mostrarSiguienteSolicitud();
         } catch (RemoteException e) {
             notiPrincipal.appendText("Hubo un error aceptando la amistad\n");
@@ -648,10 +673,12 @@ public class AerochatController {
         }
     }
 
+    //Función para rechazar una petición de amistad
     @FXML
     public void rechazarAmigo() {
         notiPrincipal.appendText("Solicitud de amistad rechazada\n");
         try {
+            //Se borra la solicitud tramitada del archivo
             servidor.borrarSolicitud(cliente.getNombre(), solicitanteAmistadActual);
         }catch (RemoteException e){
             System.out.println("Error: " + e);
@@ -661,7 +688,7 @@ public class AerochatController {
         mostrarSiguienteSolicitud();
     }
 
-
+    //Función para recargar el panel de amigos del interfaz gráfico
     @FXML
     public void recargaAmigos() {
         try {
@@ -671,6 +698,7 @@ public class AerochatController {
         }
     }
 
+    //Función para eliminar un amigo
     @FXML
     public void borrarAmigo() {
         try {
