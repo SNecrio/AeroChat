@@ -48,7 +48,6 @@
                   </VBox>
                </content>
             </ScrollPane>
-            <Button fx:id="addAmigo" disable="true" layoutX="107.0" layoutY="295.0" mnemonicParsing="false" onAction="#anadirAmigo" prefHeight="26.0" prefWidth="92.0" text="Añadir amigo" />
             <Button layoutX="236.0" layoutY="295.0" mnemonicParsing="false" onAction="#botonesConectados" prefHeight="26.0" prefWidth="26.0" text="↺" />
          </children>
       </AnchorPane>
