@@ -105,19 +105,28 @@ public interface interfazServidor extends Remote {
     public boolean cambiarContrasinal(String nome, String contrasinal, String novo)
             throws java.rmi.RemoteException;
 
-    /*
-    public interfazCliente getCliente(String nome)
-            throws Exception;*/
 
 
     /**
-     * Función que inicia el intento de comunicación
+     * Función que le proporciona a un cliente la interfaz del usuario con el que desea comunicarse
+     * @param origen Interfaz del cliente que quiere establecer la conexión
+     * @param destino Nombre del cliente con el que se desean conectar
      */
-    public void intentarConexion(interfazCliente origen, String destino) throws Exception;
+    public void intentarConexion(interfazCliente origen, String destino)
+            throws Exception;
 
-    public void rechazarConexion(interfazCliente origen) throws Exception;
+    /**
+     * Función para aceptar un intento de conexión
+     * @param origen Interfaz del cliente que quiere establecer la conexión
+     * @param destino Interfaz del cliente con el que se desea contactar
+     */
+    public void aceptarConexion(interfazCliente origen, interfazCliente destino)
+            throws Exception;
 
-    public void aceptarConexion(interfazCliente origen, interfazCliente destino) throws Exception;
-
-
+    /**
+     * Función para rechazar un intento de conexión
+     * @param origen Interfaz del cliente que quiere establecer la conexión
+     */
+    public void rechazarConexion(interfazCliente origen)
+            throws Exception;
 }
