@@ -1,6 +1,6 @@
 ## Cambios
 
-- Muchos comentariooooooooos (pero aún queda)
+- Creo que ya comente todo lo de las ventanas
 
 ## Cosas por hacer
 - Comentar

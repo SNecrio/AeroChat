@@ -14,6 +14,10 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BackgroundSize;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.URL;
 import java.rmi.*;
 
 import java.rmi.Naming;
@@ -234,7 +238,6 @@ public class AerochatController {
                         Thread.sleep(500);
                         System.exit(0);
                     } catch (Exception e) {
-                        throw new RuntimeException(e);
                     }
                 });
 
@@ -271,6 +274,7 @@ public class AerochatController {
     @FXML
     private void changePassword(){
 
+        //Se leen las contraseñas del panel
         String oldPassword = oldPasswordText.getText();
         String newPassword = newPasswordText.getText();
 
@@ -283,6 +287,7 @@ public class AerochatController {
             return;
         }
 
+        //Se comprueba con el servidor, y si la contraseña actual es correcta, se cambia la contraseña
         boolean success;
         try{
             success = servidor.cambiarContrasinal(cliente.getNombre(), oldPassword, newPassword);
@@ -291,6 +296,7 @@ public class AerochatController {
             throw new RuntimeException(e);
         }
 
+        //Se modifica la interfaz dependiendo de lo que ocurra
         if(!success){
             contrasenaWarning.setText("Tu contraseña no es la introducida");
         }else{
@@ -309,14 +315,16 @@ public class AerochatController {
     }
 
     private void Conectar(String hostName) throws Exception {
+        //Intentamos obtener el objeto servidor
         String registryURL = "rmi://" + hostName+ ":1099/aerochat";
         servidor = (interfazServidor)Naming.lookup(registryURL);
     }
 
     @FXML
     protected void onGenteConectada() {
-        crearFondoNegro(0);
 
+        //Modificamos la interfaz
+        crearFondoNegro(0);
         friendText.setDisable(true);
         for(var boton : botonesPrincipal)
             boton.setDisable(true);
@@ -330,6 +338,8 @@ public class AerochatController {
 
     @FXML
     protected void botonesConectados(){
+
+        //Cargamos todos los clientes actuales, creamos un boton para cada uno y los metemos en la lista
         vboxConectados.getChildren().clear();
         try {
             conected = servidor.obtenerClientesActuales();
@@ -347,6 +357,8 @@ public class AerochatController {
 
     private void crearFondoNegro(int panelID){
 
+        //Creamos un fondo negro por motivos esteticos y para evitar
+        //la interaccion con los botones externos dentro de un menu
         if(fondoNegro != null){
             panel.getChildren().remove(fondoNegro);
             fondoNegro = null;
@@ -365,6 +377,9 @@ public class AerochatController {
     @FXML
     protected void onTouchFondoNegro(int panelID){
 
+        //En ciertos paneles, tocar el propio fondo negro los cierra.
+        //Si se le pasa un numero que no corresponde a un panel, no hace nada, esto es para los paneles
+        //que no puedes cerrar tocando el fondo
         switch (panelID){
 
             case 0:
@@ -405,6 +420,7 @@ public class AerochatController {
 
     @FXML
     protected void onCambiarContrasena() {
+        //Modificamos la interfaz al tocar el boton y traemos el boton del panel
         crearFondoNegro(1);
 
         friendText.setDisable(true);
@@ -418,6 +434,9 @@ public class AerochatController {
 
     @FXML
     protected void onUserClick(String nombre){
+
+        //Al clickar en un usuario en la lista de amigos, guardamos su nombre para
+        //el resto de operaciones
         try{
             selectedUser = nombre;
             conectarAmigoBoton.setDisable(false);
@@ -427,12 +446,13 @@ public class AerochatController {
         }
     }
 
-    ///CONEXION
+    ///CONEXION ENTRE CLIENTES
     //Comenzar conexion
     @FXML
     protected void intentarConexion(){
 
         try{
+            //modificamos la interfaz
             panelConectados.setDisable(true);
             panelConectados.setOpacity(0.0);
             crearFondoNegro(-1);
@@ -442,6 +462,7 @@ public class AerochatController {
             connectingUserOrigen.setText(selectedUser);
             panelConexionOrigen.toFront();
 
+            //Tratamos de intentar conexion con el otor usuario a traves del servidor
             tratandoConexion = true;
             servidor.intentarConexion(cliente, selectedUser);
             notiPrincipal.appendText("Intentando conectar con " + selectedUser + "\n");
@@ -454,7 +475,9 @@ public class AerochatController {
     @FXML
     protected void recibirConexion(interfazCliente origen){
 
+        //Esta funcion se activa si nos lo indica el servidor
         try{
+            //Modificamos la interfaz
             panelConectados.setDisable(true);
             panelConectados.setOpacity(0.0);
             panelContrasena.setDisable(true);
@@ -469,6 +492,7 @@ public class AerochatController {
             conectandoLabel.setText("Este usuario esta intentando conectar contigo:");
             connectingUserDestino.setText(origen.getNombre());
 
+            //Ponemos funciones en los botones
             rechazarConexionDestinoBoton.setOnAction(event -> {rechazarConexionDestino(origen);});
             aceptarConexionDestinoBoton.setOnAction(event -> { aceptarConexionDestino(origen);});
 
@@ -481,6 +505,7 @@ public class AerochatController {
     //Aceptar conexion
     public void aceptarConexionDestino(interfazCliente origen){
 
+        //Mandamos una señal al servidor a la vez que intentamos abrir el chat
         onTouchFondoNegro(3);
         try{
             servidor.aceptarConexion(origen, cliente);
@@ -492,6 +517,8 @@ public class AerochatController {
     }
 
     public void intentoConexionAceptado(interfazCliente destino) throws Exception {
+
+        //Si recibimos que el destino nos acepto al conexion, abrimos el chat
         if(!tratandoConexion){
             throw new Exception();
         }
@@ -500,6 +527,7 @@ public class AerochatController {
     }
 
     public void abrirChat(interfazCliente destino) throws Exception{
+        //Creamos la ventana de chat
         FXMLLoader loader = new FXMLLoader(getClass().getResource("AerochatChat.fxml"));
         Scene scene = new Scene(loader.load(), 720, 440);
 
@@ -508,18 +536,25 @@ public class AerochatController {
         chat.setScene(scene);
         chat.show();
         chatController = loader.getController();
+
+        //Le mandamos los usuarios a la ventana de chat
         chatController.setUsers(cliente,destino);
 
+        //Guardamos el nuevo chat en el cliente, para saber redirigir los mensajes
         cliente.anadirCliente(destino.getNombre(), destino, chatController);
     }
 
     //Cancelar conexion
     public void cancelarConexionOrigen(){
+        //Si queremos dejar de intentar conectarnos con un cliente,
+        //simplemente dejamos de intentarlo y si el destino intento aceptar,
+        //se le mandara un error
         tratandoConexion = false;
         onTouchFondoNegro(2);
     }
     public void rechazarConexionDestino(interfazCliente origen){
 
+        //Le mandamos al servidor que no queremos conectarnos
         try{
             servidor.rechazarConexion(origen);
         } catch (Exception e) {
@@ -531,14 +566,18 @@ public class AerochatController {
     }
     public void intentoConexionRechazado(){
 
+        //Si recibimos que el destino no quiere conectarse,
+        //modificamos la interfaz
         tratandoConexion = false;
         rechazarConexionOrigenBoton.setDisable(true);
         onTouchFondoNegro(2);
         notiPrincipal.appendText("Conexion rechazada por el destino\n");
     }
 
+    ///AMIGOS
     private void ponerAmigos(ArrayList<String> amigos){
 
+        //Una vez tenemos la lsista de amigos, creamos un boton para cada uno y los metemos en el panel
         try{
             vboxAmigos.getChildren().clear();
             for(String amigo : amigos){
@@ -550,6 +589,7 @@ public class AerochatController {
                     onUserClick(amigo);
                 });
 
+                //Vemos si esta conectado para modificar el boton
                 boolean conectado = false;
                 conected=servidor.obtenerClientesActuales();
                 if(conected.contains(amigo)){
@@ -569,15 +609,15 @@ public class AerochatController {
     @FXML
     public void anadirAmigo() {
 
+        //Comrpobamos el nombre
         String nombre = friendText.getText();
-
         if(nombre.isBlank() || nombre.contains("|") || nombre.contains(":")){
             warningText.setText("Introduzca un nombre valido");
             return;
         }
-
         friendText.setText("");
 
+        //Comprobamos que el usuario escrito sea un amigo valido
         try {
             if (servidor.listarAmigos(cliente.getNombre()).contains(nombre)) {
                 notiPrincipal.appendText("El usuario " + nombre + " ya se encuentra en tu lista de amigos\n");
@@ -586,6 +626,7 @@ public class AerochatController {
             }else if(cliente.getNombre().equals(nombre)){
                 notiPrincipal.appendText("¿Estás intentando ser tu propio amigo?\n");
             }else{
+                //Si es un amigo valido, le enviamos amistad, a menos que ya tenga una solicitud pendiente
                 if(servidor.enviarAmistad(cliente.getNombre(), nombre)){
                     notiPrincipal.appendText("Solicitud enviada con éxito a " + nombre + "\n");
                     servidor.avisarDeSolicitud(nombre, cliente.getNombre());
@@ -600,16 +641,17 @@ public class AerochatController {
     @FXML
     public void recibirSolicitud(String posibleAmigo) {
 
-            colaSolicitudes.add(posibleAmigo);
-
-            if (solicitanteAmistadActual == null) {
+        //Añadimos a la cola y vemos si ya hay alguna en ella
+        colaSolicitudes.add(posibleAmigo);
+        if (solicitanteAmistadActual == null) {
             mostrarSiguienteSolicitud();
-            }
+        }
     }
 
     private void mostrarSiguienteSolicitud() {
-        solicitanteAmistadActual = colaSolicitudes.poll();
 
+        //Sacamos la solicitud de la cola y al mostramos por interfaz
+        solicitanteAmistadActual = colaSolicitudes.poll();
         if (solicitanteAmistadActual == null) {
             panelSolicitudAmistad.setDisable(true);
             panelSolicitudAmistad.setOpacity(0.0);
@@ -630,6 +672,7 @@ public class AerochatController {
     @FXML
     public void aceptarAmigo() {
 
+        //Rescribimos la lista de amigos del cliente con el nuevo amigo
         onTouchFondoNegro(4);
         try {
             servidor.rescribirAmigos(cliente.getNombre(), solicitanteAmistadActual, 0);
@@ -641,6 +684,8 @@ public class AerochatController {
                 System.out.println("Error: " + e);
             }
             solicitanteAmistadActual = null;
+
+            //Despues de sobreescribirla, vamos a la siguiente solicitud
             mostrarSiguienteSolicitud();
         } catch (RemoteException e) {
             notiPrincipal.appendText("Hubo un error aceptando la amistad\n");
@@ -650,6 +695,8 @@ public class AerochatController {
 
     @FXML
     public void rechazarAmigo() {
+
+        //Borramos la solicitud y vamos a la siguiente
         notiPrincipal.appendText("Solicitud de amistad rechazada\n");
         try {
             servidor.borrarSolicitud(cliente.getNombre(), solicitanteAmistadActual);
@@ -664,6 +711,7 @@ public class AerochatController {
 
     @FXML
     public void recargaAmigos() {
+        //Funcion para recargar los amigos al darle al boton
         try {
             ponerAmigos(servidor.listarAmigos(cliente.getNombre()));
         } catch (RemoteException e) {
@@ -673,6 +721,8 @@ public class AerochatController {
 
     @FXML
     public void borrarAmigo() {
+
+        //Despues de comprobar que el amigo existe, lo borramos de la lista de amigos y la actualizamos en el panel
         try {
             String amigo = selectedUser;
             if(!servidor.listarAmigos(cliente.getNombre()).contains(amigo)){

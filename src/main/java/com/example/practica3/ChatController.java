@@ -29,6 +29,7 @@ public class ChatController {
     @FXML
     public void initialize(){
 
+        //Inicializamos la ventana y sus fondos
         messageArea.setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.ENTER) {
                 enviarMensaje();
@@ -68,6 +69,7 @@ public class ChatController {
 
     public void setUsers(interfazCliente cliente, interfazCliente destino) throws Exception{
 
+        //Asignamos los usuarios y actualizamos la interfaz
         this.cliente = cliente;
         this.destino = destino;
         usuarioLabel.setText(destino.getNombre());
@@ -91,13 +93,14 @@ public class ChatController {
             return;
         }
         try{
+            //Creamos el mensaje en la interfaz
             Label usuario = new Label(LocalTime.now().getHour() + ":" + LocalTime.now().getMinute() + "| " + cliente.getNombre());
             Label mensaje = new Label(mensajeEnviar);
             chatbox.getChildren().add(usuario);
             chatbox.getChildren().add(mensaje);
 
+            //Se lo mandamos al destino
             cliente.enviarMensaje(destino.getNombre(), mensajeEnviar);
-
         } catch (Exception e) {
             System.err.println("Error en el mandado de mensaje");
             throw new RuntimeException(e);
@@ -105,12 +108,12 @@ public class ChatController {
 
         chatbox.layout();
         scroll.setVvalue(scroll.getVmax());
-
         messageArea.setText("");
     }
 
     @FXML
     protected void recibirMensaje(String mensajeRecibido) throws Exception{
+        //Al recibir un mensaje, lo creamos en el panel
         Label usuario = new Label(LocalTime.now().getHour() + ":" + LocalTime.now().getMinute() + "| " + destino.getNombre());
         Label mensaje = new Label(mensajeRecibido);
 
@@ -120,6 +123,7 @@ public class ChatController {
 
     @FXML
     protected void recibirSalida() throws Exception{
+        //Si recibimos que el otro usuario se fue, lo enviamos al panel y desactivamos el texto
         Label aviso = new Label(LocalTime.now().getHour() + ":" + LocalTime.now().getMinute() + "| " + destino.getNombre() + " se ha desconectado");
 
         aviso.setStyle("-fx-text-fill: #cf0000;"); //Rojo
@@ -129,6 +133,7 @@ public class ChatController {
     }
 
     protected void notificarSalida() throws Exception {
+        //Notificamos al otro cliente de que nos desconectamos
         destino.recibirSalida(cliente.getNombre());
     }
 }
